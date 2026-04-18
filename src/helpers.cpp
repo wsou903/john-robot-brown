@@ -1,5 +1,16 @@
 #include "helpers.h"
 
+// THIS IS TO STOP WRAPAROUND ON THE GYRO READ
+float angle_diff(float target, float current)
+{
+  float diff = target - current;
+  while (diff > PI)
+    diff -= 2 * PI;
+  while (diff < -PI)
+    diff += 2 * PI;
+  return diff;
+}
+
 int FindMinIndex(float arr[], int n)
 {
   float min = arr[0];

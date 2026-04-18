@@ -2,7 +2,6 @@
 
 #include "homing.h"
 
-void drive_straight_poc();
 
 void G28()
 {
@@ -54,74 +53,74 @@ void Align(float *array)
 
 }
 
-void drive_straight_poc(){
-  bool wall_proximity = false;
+// void drive_straight_poc(){
+//   bool wall_proximity = false;
 
-  float speed_val_reborne = 150;
+//   float speed_val_reborne = 150;
 
-  float kp_x =      2     *speed_val_reborne;
-  float kp_y =      2     *speed_val_reborne;
-  float kp_gyro =   2     *speed_val_reborne;
+//   float kp_x =      2     *speed_val_reborne;
+//   float kp_y =      2     *speed_val_reborne;
+//   float kp_gyro =   2     *speed_val_reborne;
 
-  // float ki_x = 0.01;
-  // float ki_y = 0.01;
-  // float ki_gyro = 0.01;
+//   // float ki_x = 0.01;
+//   // float ki_y = 0.01;
+//   // float ki_gyro = 0.01;
 
-  float err_x;
-  float err_y;
-  float err_gyro;
+//   float err_x;
+//   float err_y;
+//   float err_gyro;
 
-  // float integral_sum_x;
-  // float integral_sum_y;
-  // float integral_sum_gyro;
+//   // float integral_sum_x;
+//   // float integral_sum_y;
+//   // float integral_sum_gyro;
 
-  float x_u;
-  float y_u;
-  float gyro_u;
+//   float x_u;
+//   float y_u;
+//   float gyro_u;
 
-  // loop
-  while (!wall_proximity){
-  //BluetoothSerial.println("i print every time drive loops");
+//   // loop
+//   while (!wall_proximity){
+//   //BluetoothSerial.println("i print every time drive loops");
 
 
-    float movement[3] = {0};
-    Align(movement);
-    err_x = movement[0];
-    err_y = movement[1];  
-    err_gyro = movement[2];
-    // control effort calcs
-    x_u = kp_x * err_x;
-    y_u = kp_y *  err_y;
-    gyro_u = kp_gyro * err_gyro;
-    // print control efforts for debugging
-    BluetoothSerial.print("x_u: ");
-    BluetoothSerial.print(x_u);
-    BluetoothSerial.print(" y_u: ");
-    BluetoothSerial.print(y_u);
-    BluetoothSerial.print(" gyro_u: ");
-    BluetoothSerial.println(gyro_u);
+//     float movement[3] = {0};
+//     Align(movement);
+//     err_x = movement[0];
+//     err_y = movement[1];  
+//     err_gyro = movement[2];
+//     // control effort calcs
+//     x_u = kp_x * err_x;
+//     y_u = kp_y *  err_y;
+//     gyro_u = kp_gyro * err_gyro;
+//     // print control efforts for debugging
+//     BluetoothSerial.print("x_u: ");
+//     BluetoothSerial.print(x_u);
+//     BluetoothSerial.print(" y_u: ");
+//     BluetoothSerial.print(y_u);
+//     BluetoothSerial.print(" gyro_u: ");
+//     BluetoothSerial.println(gyro_u);
 
-    // if (x_u + y_u + gyro_u < 1) {
-    //   wall_proximity = true;
-    //   stop();
-    //   BluetoothSerial.println("stopped in stop condition");
-    //   delay(2000);
-    //   break;
-    // }
+//     // if (x_u + y_u + gyro_u < 1) {
+//     //   wall_proximity = true;
+//     //   stop();
+//     //   BluetoothSerial.println("stopped in stop condition");
+//     //   delay(2000);
+//     //   break;
+//     // }
 
-    // clamping?? idk
+//     // clamping?? idk
 
-    left_font_motor.writeMicroseconds(1500 - x_u - y_u + gyro_u);
-    left_rear_motor.writeMicroseconds(1500 - x_u + y_u + gyro_u);
-    right_rear_motor.writeMicroseconds(1500 + x_u + y_u + gyro_u);
-    right_font_motor.writeMicroseconds(1500 + x_u - y_u + gyro_u);
+//     left_font_motor.writeMicroseconds(1500 - x_u - y_u + gyro_u);
+//     left_rear_motor.writeMicroseconds(1500 - x_u + y_u + gyro_u);
+//     right_rear_motor.writeMicroseconds(1500 + x_u + y_u + gyro_u);
+//     right_font_motor.writeMicroseconds(1500 + x_u - y_u + gyro_u);
 
-    //add reasonable delay to prevent control fuckups
-    delay(100);
-  }
+//     //add reasonable delay to prevent control fuckups
+//     delay(100);
+//   }
         
-  stop();
-}
+//   stop();
+// }
 // void G28()
 // {
 //   float distReadings[TURNING_SAMPLES] = {0};

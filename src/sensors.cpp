@@ -152,6 +152,28 @@ void GYRO_reading()
 }
 #endif
 
+float get_rotation_vector_yaw()
+{
+  if (bno08x.getSensorEvent(&sensorValue))
+  {
+    if (sensorValue.sensorId == SH2_GAME_ROTATION_VECTOR)
+    {
+      // Extract Quaternions
+      float i = sensorValue.un.rotationVector.i;
+      float j = sensorValue.un.rotationVector.j;
+      float k = sensorValue.un.rotationVector.k;
+      float r = sensorValue.un.rotationVector.real;
+
+      // Conversion to Yaw (Heading) in Radians
+      // Range is -PI to +PI
+      float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
+
+      return yaw;
+    }
+  }
+  return robot_heading; // Return last known if no new data
+}
+
 
 void TestIRSensors(){
   

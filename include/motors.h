@@ -2,6 +2,8 @@
 #define MOTORS_H
 
 #include "config.h"
+#include "helpers.h"
+#include "sensors.h"
 
 // -- Code Prototypes --------------------------------------------------
 void speed_change_smooth();
@@ -17,5 +19,6 @@ void strafe_right();
 void quarter_turn(int cw_ccw_mode);
 void move(float x, float y, float z);
 void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_ratio);
+void drive_straight_poc();
 
 #endif
