@@ -1,0 +1,187 @@
+
+#include "sensors.h"
+
+float lastRightSR = 100, lastLeftSR = 100;
+float lastRightLR = 100, lastLeftLR = 100;
+float lastUS = 100;
+float alpha_SR = 0.1;
+float alpha_LR = 0.1;
+float alpha_US = 0.1;
+
+// setup the kalman filter vars needs to be updated -------------------------------------------------------------------------------------------------
+// KalmanFilter kfUS(2.0, 2.0, 0.01);
+// KalmanFilter kfSR_L(2.0, 2.0, 0.01);
+// KalmanFilter kfSR_R(2.0, 2.0, 0.01);
+// KalmanFilter kfLR_L(5.0, 5.0, 0.02);
+// KalmanFilter kfLR_R(5.0, 5.0, 0.02);
+
+// short range ir (front)
+float getLeftSR()
+{
+  // float volt = analogRead(pinIR_Short2) * (5.0 / 1023.0);
+  // float rawDist = 12.08 * pow(volt, -1.058); // simplified curve from datasheet
+  // distSR2 = kfSR_L.updateEstimate(rawDist);
+  float adcRaw = analogRead(pinIR_Short2);
+  if(adcRaw == 0) adcRaw = 1;
+  float temp_val = 13*pow(adcRaw*0.0048828125, -1);
+   lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
+   return lastLeftSR;
+}
+
+float getRightSR()
+{
+  float adcRaw = analogRead(pinIR_Short1);
+  if(adcRaw == 0) adcRaw = 1;
+  float temp_val = 13*pow(adcRaw*0.0048828125, -1);
+   lastRightSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastRightSR;
+  // float volt = analogRead(pinIR_Short1) * (5.0 / 1023.0);
+  // float rawDist = 12.08 * pow(volt, -1.058);
+  // distSR1 = kfSR_R.updateEstimate(rawDist);
+  return lastRightSR;
+}
+
+// long range ir (left)
+float getLeftLR()
+{
+  // float volt = analogRead(pinIR_Long2) * (5.0 / 1023.0);
+  // float rawDist = 27.08 * pow(volt, -1.201); // Curve from GP2Y0A21 datasheet
+  // distLR2 = kfLR_L.updateEstimate(rawDist);
+    float adcRaw = analogRead(pinIR_Long1);
+  if(adcRaw == 0) adcRaw = 1;
+  float temp_val = 12343.85 * pow(adcRaw, -1.15);
+   lastLeftLR =  (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastLeftLR;
+  return lastLeftLR;
+}
+
+float getRightLR()
+{
+  // float volt = analogRead(pinIR_Long1) * (5.0 / 1023.0);
+  // float rawDist = 27.08 * pow(volt, -1.201);
+  // distLR1 = kfLR_R.updateEstimate(rawDist);
+      float adcRaw = analogRead(pinIR_Long2);
+  if(adcRaw == 0) adcRaw = 1;
+  float temp_val = 12343.85 * pow(adcRaw, -1.15);
+   lastRightLR =  (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastRightLR;
+  return lastRightLR;
+}
+
+// ultrasonic
+float getUSDistance()
+{
+  digitalWrite(PIN_TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(PIN_TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(PIN_TRIG, LOW);
+
+  long duration = pulseIn(PIN_ECHO, HIGH);
+  float raw = (duration * 0.0343) / 2.0;
+     lastUS =  (alpha_US * raw) + (1.0 - alpha_US) * lastUS;
+
+  // if (raw <= 0 || raw > 400)
+  // {
+  //   return raw; // return last good global if out of range
+  // }
+
+  // distanceUS = kfUS.updateEstimate(raw); // kalman filter
+
+  return lastUS;                     // return filtered value
+}
+
+void calibrateGyro()
+{
+  float sum = 0;
+  int samples = 100;
+
+  for (int i = 0; i < samples; i++)
+  {
+    if (bno08x.getSensorEvent(&sensorValue))
+    {
+      if (sensorValue.sensorId == SH2_GYROSCOPE_UNCALIBRATED)
+      {
+        sum += sensorValue.un.gyroscope.z;
+      }
+    }
+    delay(5);
+  }
+
+  gyro_bias = sum / samples;
+}
+
+#ifndef NO_READ_GYRO
+void GYRO_reading()
+{
+
+  if (bno08x.wasReset())
+  {
+    bno08x.enableReport(SH2_GYROSCOPE_UNCALIBRATED);
+  }
+
+  if (bno08x.getSensorEvent(&sensorValue))
+  {
+    if (sensorValue.sensorId == SH2_GYROSCOPE_UNCALIBRATED)
+    {
+      unsigned long now = micros();
+      float gyroZ = sensorValue.un.gyroscope.z;
+      if (last_gyro_time == 0)
+      {
+        last_gyro_time = now;
+      } // First run fix
+      float dt = (now - last_gyro_time) / 1000000.0; // 1000000 to convert to seconds
+      last_gyro_time = now;                          // sets it to the current time, ready for the next time this function is called
+      gyroZ -= gyro_bias;
+      if (abs(gyroZ) < 0.02)
+      {
+        gyroZ = 0;
+      }
+
+      rad = gyroZ * dt;
+      robot_heading += rad;
+
+      if (robot_heading >= 6.28)
+        robot_heading -= 6.28;
+      if (robot_heading < 0)
+        robot_heading += 6.28;
+
+      // BluetoothSerial.println(rad);
+      BluetoothSerial.println(robot_heading);
+    }
+  }
+
+  return;
+}
+#endif
+
+
+void TestIRSensors(){
+  
+
+  static unsigned long timer = millis();
+
+  while(true){
+  if((millis() - timer) > 50){
+  
+
+
+    
+    Serial.print("SR1:");
+    Serial.print(getRightSR());
+    Serial.print(",");
+    Serial.print("SR2:");
+    Serial.print(getLeftSR());
+      Serial.print("LR1:");
+    Serial.print(getLeftLR());
+    Serial.print(",");
+    Serial.print("LR2:");
+    Serial.print(getRightLR());
+      Serial.print("US:");
+    Serial.print(getUSDistance());
+
+
+    Serial.println();
+
+    timer = millis();
+
+  }
+  }
+}
