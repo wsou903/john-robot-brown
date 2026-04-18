@@ -2,8 +2,7 @@
 #define MOTORS_H
 
 #include "config.h"
-#include "helpers.h"
-#include "sensors.h"
+
 
 // -- Code Prototypes --------------------------------------------------
 void speed_change_smooth();

@@ -2,7 +2,7 @@
 #define SLAM_H
 
 #include "config.h"
-#include "helpers.h"
+
 
 // funny init
 void init_slam();

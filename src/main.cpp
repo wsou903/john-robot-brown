@@ -124,12 +124,13 @@ STATE running()
     // //     SerialCom->println("RUNNING---------");
     speed_change_smooth();
     Serial.println("speed_val");
-    move(1, 0, 0);
-    delay(5000);
+    // move(1, 0, 0);
+    // drive_straight_poc();
+    // delay(5000);
     // move(0, 1, 0);
     // delay(5000);
-    // move(0, 0, 1);
-    // delay(5000);
+    move(0, 0, 1);
+    delay(5000);
     // move(-1, 0 , 0);
     // delay(5000);
     // move(2, 1, 0);

@@ -1,6 +1,8 @@
 
 
 #include "slam.h"
+#include "helpers.h"
+#include "sensors.h"
 
 // states for servo sweeping with the ultrasonic sensor
 enum US_STATE

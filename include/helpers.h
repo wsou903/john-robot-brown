@@ -2,8 +2,7 @@
 #define HELPERS_H
 
 #include "config.h"
-#include "motors.h"
-#include "sensors.h"
+
 
 int FindMinIndex(float arr[], int n);
 int getIndex(float arr[], int n, float desired);

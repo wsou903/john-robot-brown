@@ -1,4 +1,6 @@
 #include "helpers.h"
+#include "motors.h"
+#include "sensors.h"
 
 // THIS IS TO STOP WRAPAROUND ON THE GYRO READ
 float angle_diff(float target, float current)

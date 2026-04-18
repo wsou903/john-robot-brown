@@ -16,6 +16,6 @@ void TestIRSensors();
 // gyroscope functions
 void calibrateGyro();
 void GYRO_reading();
-float get_rotation_vector_yaw()
+float get_rotation_vector_yaw();
 
 #endif

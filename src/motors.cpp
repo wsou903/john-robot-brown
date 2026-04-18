@@ -1,7 +1,8 @@
 
-#include "config.h"
-#include "sensors.h"
+
 #include "motors.h"
+#include "helpers.h"
+#include "sensors.h"
 // Code Starts ----------------------------------------------------------------------------------------------------
 int n = 4;
 float integral_sum_ir;
@@ -104,7 +105,7 @@ void move(float x, float y, float z)
   inverse_kinematics(x, y, z, ang_val_ratios);
 
   // int k = 150; // 150 is the maximum speed
-  int k = 400;
+  int k = 150;
 
   left_font_motor.writeMicroseconds(1500 - (ang_val_ratios[0] * k));
   left_rear_motor.writeMicroseconds(1500 - (ang_val_ratios[2] * k));
@@ -136,7 +137,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
   }
   // BluetoothSerial.print("Max: ");
   // BluetoothSerial.println(max);
-  // delay(10);
+  delay(10);
   for (int john = 0; john < n; john++)
   {
     if (max > 0.001)
@@ -148,13 +149,17 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
       ang_vel_ratio[john] = 0;
     }
   }
-  // BluetoothSerial.println("Ratios: " + String(ang_vel_ratio[0], 2) + ", " + String(ang_vel_ratio[1], 2) + ", " + String(ang_vel_ratio[2], 2) + ", " + String(ang_vel_ratio[3], 2));
+  BluetoothSerial.println("Ratios: " + String(ang_vel_ratio[0], 2) + ", " + String(ang_vel_ratio[1], 2) + ", " + String(ang_vel_ratio[2], 2) + ", " + String(ang_vel_ratio[3], 2));
 }
 
 
 
 void drive_straight_poc()
 {
+
+  float integral_sum_ir=0;
+  float integral_sum_gyro =0;
+  float ang_val_ratios[n];
 
   int ir_enabled = 1;
   int gyro_enabled = 1;
@@ -183,9 +188,16 @@ void drive_straight_poc()
   gyro_read = get_rotation_vector_yaw();
   float gyro_initial = gyro_read;
 
+  // timing for derivative
+  // unsigned long last_time = micros();
+
   // loop
   while (!wall_proximity)
   {
+
+    // unsigned long now = micros();
+    // float dt = (now - last_time) / 1000000.0; // convert to seconds
+    // last_time = now;
 
     avg_lr_read = (getLeftLR() + getRightLR()) / 2.0;
     gyro_read = get_rotation_vector_yaw();
@@ -213,25 +225,39 @@ void drive_straight_poc()
     // if (abs(err_ir) < 1) err_ir = 0;
     // if (abs(err_gyro) < 0.5) err_gyro = 0;
 
+    // float d_err = 0;
+    // if (dt>0){
+    //   d_err = (err_gyro - prev_err_gyro) / dt;
+    // }
     float d_err = err_gyro - prev_err_gyro;
     prev_err_gyro = err_gyro;
 
     // integral terms and windup prevention
+    // integral_sum_ir += (err_ir*dt);
+    // integral_sum_gyro += (err_gyro*dt);
     integral_sum_ir += err_ir;
     integral_sum_gyro += err_gyro;
     integral_sum_ir = constrain(integral_sum_ir, -1000, 1000);
     integral_sum_gyro = constrain(integral_sum_gyro, -1000, 1000);
 
     // control effort calcs
-    ir_u = kp_ir * err_ir + ki_ir * integral_sum_ir;
-    gyro_u = kp_gyro * err_gyro + ki_gyro * integral_sum_gyro + kd_gyro * d_err;
+    ir_u = (kp_ir * err_ir) + (ki_ir * integral_sum_ir);
+    gyro_u = (kp_gyro * err_gyro) + (ki_gyro * integral_sum_gyro) + (kd_gyro * d_err);
 
     // clamping?? idk
+    inverse_kinematics(1, 0, 0, ang_val_ratios); // this is just to get the ratios for strafing and forward movement, the actual speed is determined by the control efforts below
+    int k = 150;
 
-    left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
-    left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
-    right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
-    right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
+
+    left_font_motor.writeMicroseconds(1500 - (ang_val_ratios[0] * k) - ir_u - gyro_u);
+    left_rear_motor.writeMicroseconds(1500 - (ang_val_ratios[2] * k) + ir_u - gyro_u);
+    right_rear_motor.writeMicroseconds(1500 + (ang_val_ratios[3] * k) + ir_u - gyro_u);
+    right_font_motor.writeMicroseconds(1500 + (ang_val_ratios[1] * k) - ir_u - gyro_u);
+
+    // left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
+    // left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
+    // right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
+    // right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
 
     // DEBUGS
     if (millis() - last_print > 100)
@@ -239,13 +265,13 @@ void drive_straight_poc()
       // BluetoothSerial.print("err_gyro: ");
       // BluetoothSerial.println(err_gyro, 4);
       // BluetoothSerial.println();
-      BluetoothSerial.print("gyro_u: ");
-      BluetoothSerial.println(gyro_u, 2);
-      BluetoothSerial.println();
+      // BluetoothSerial.print("gyro_u: ");
+      // BluetoothSerial.println(gyro_u, 2);
+      // BluetoothSerial.println();
       last_print = millis();
     }
 
-    delay(10); // DELAY ///////////////
+    // delay(10); // DELAY ///////////////
   }
 
   stop();
