@@ -245,19 +245,19 @@ void drive_straight_poc()
     gyro_u = (kp_gyro * err_gyro) + (ki_gyro * integral_sum_gyro) + (kd_gyro * d_err);
 
     // clamping?? idk
-    inverse_kinematics(1, 0, 0, ang_val_ratios); // this is just to get the ratios for strafing and forward movement, the actual speed is determined by the control efforts below
-    int k = 150;
+    // inverse_kinematics(1, 0, 0, ang_val_ratios); // this is just to get the ratios for strafing and forward movement, the actual speed is determined by the control efforts below
+    // int k = 150;
 
 
-    left_font_motor.writeMicroseconds(1500 - (ang_val_ratios[0] * k) - ir_u - gyro_u);
-    left_rear_motor.writeMicroseconds(1500 - (ang_val_ratios[2] * k) + ir_u - gyro_u);
-    right_rear_motor.writeMicroseconds(1500 + (ang_val_ratios[3] * k) + ir_u - gyro_u);
-    right_font_motor.writeMicroseconds(1500 + (ang_val_ratios[1] * k) - ir_u - gyro_u);
+    // left_font_motor.writeMicroseconds(1500 - (ang_val_ratios[0] * k) - ir_u - gyro_u);
+    // left_rear_motor.writeMicroseconds(1500 - (ang_val_ratios[2] * k) + ir_u - gyro_u);
+    // right_rear_motor.writeMicroseconds(1500 + (ang_val_ratios[3] * k) + ir_u - gyro_u);
+    // right_font_motor.writeMicroseconds(1500 + (ang_val_ratios[1] * k) - ir_u - gyro_u);
 
-    // left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
-    // left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
-    // right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
-    // right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
+    left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
+    left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
+    right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
+    right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
 
     // DEBUGS
     if (millis() - last_print > 100)
@@ -278,7 +278,66 @@ void drive_straight_poc()
   BluetoothSerial.println("YAYAYAYAY");
 }
 
+void turn_90_degrees(int cw_ccw_mode)
+{
+  const float Kp = 120.0;
+  const float Ki = 3.0;
+  const float Kd = 5.0;
+  const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
+  const int max_output = 150;
 
+  float ang_val_ratios[n];
+  float omega_z = (cw_ccw_mode == 1) ? 1.0 : -1.0;
+  inverse_kinematics(0, 0, omega_z, ang_val_ratios);
+
+  float target_heading = robot_heading + ((cw_ccw_mode == 1) ? (PI / 2.0) : (-PI / 2.0));
+  float prev_error = 0.0;
+  float integral = 0.0;
+  unsigned long last_time = micros();
+
+  while (true)
+  {
+    unsigned long now = micros();
+    float dt = (now - last_time) / 1000000.0;
+    if (dt <= 0.0)
+    {
+      dt = 0.001;
+    }
+    last_time = now;
+
+    // GYRO_reading();
+    get_rotation_vector_yaw(); // updates robot_heading
+    float current_heading = robot_heading;
+    float error = angle_diff(target_heading, current_heading);
+    float abs_error = fabs(error);
+
+    if (abs_error <= tolerance)
+    {
+      break;
+    }
+
+    integral += error * dt;
+    integral = constrain(integral, -1000.0, 1000.0);
+
+    float derivative = (error - prev_error) / dt;
+    prev_error = error;
+
+    float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
+    float command = constrain(output, -max_output, max_output);
+
+    left_font_motor.writeMicroseconds(1500 - (ang_val_ratios[0] * command));
+    left_rear_motor.writeMicroseconds(1500 - (ang_val_ratios[2] * command));
+    right_rear_motor.writeMicroseconds(1500 + (ang_val_ratios[3] * command));
+    right_font_motor.writeMicroseconds(1500 + (ang_val_ratios[1] * command));
+
+    BluetoothSerial.print("Turn err: ");
+    BluetoothSerial.println(error * 180.0 / PI, 2);
+
+    delay(10);
+  }
+
+  stop();
+}
 
 // void quarter_turn(int cw_ccw_mode)
 // {
