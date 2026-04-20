@@ -6,10 +6,12 @@
 
 // Code Starts ----------------------------------------------------------------------------------------------------
 int n = 4;
-// float integral_sum_ir;
-// float integral_sum_gyro;
+float integral_sum_ir;
+float integral_sum_gyro;
+float integral_sum_us;
+bool function_complete = false;
 
-// static float prev_err_gyro = 0;
+static float prev_err_gyro = 0;
 
 void speed_change_smooth()
 { // Smooth speed change
