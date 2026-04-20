@@ -10,6 +10,6 @@
 
 void G28();
 
-void align();
+void Align(float* array);
 
 #endif

@@ -124,7 +124,7 @@ STATE running()
     // //     SerialCom->println("RUNNING---------");
     // speed_change_smooth();
     // Serial.println("speed_val");
-    turn_90_degrees(1);
+    // turn_90_degrees(1);
     // GYRO_reading();
     // get_rotation_vector_yaw();
     // move(1, 0, 0);

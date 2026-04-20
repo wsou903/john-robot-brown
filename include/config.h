@@ -42,7 +42,7 @@ const byte right_front = 47;
 #define US_OFFSET_FRONT 2 // 2cm from center to front
 #define TABLE_WIDTH 200.0 // these probs change --------------------------------------
 #define TABLE_HEIGHT 100.0
-#define SR_SPACING 5.5
+#define SR_SPACING 55.0
 
 // ------------ STATE MACHINE
 
