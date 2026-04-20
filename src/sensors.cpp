@@ -145,8 +145,8 @@ void GYRO_reading()
       if (robot_heading < 0)
         robot_heading += 6.28;
 
-      // BluetoothSerial.println(rad);
-      BluetoothSerial.println(robot_heading);
+      BluetoothSerial.println(rad);
+      // BluetoothSerial.println(robot_heading);
     }
   }
 

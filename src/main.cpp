@@ -122,9 +122,11 @@ STATE running()
     // previous_millis = millis();
 
     // //     SerialCom->println("RUNNING---------");
-    speed_change_smooth();
-    Serial.println("speed_val");
-    turn_90_degrees(1);
+    // speed_change_smooth();
+    // Serial.println("speed_val");
+    // turn_90_degrees(1);
+    GYRO_reading();
+    // get_rotation_vector_yaw();
     // move(1, 0, 0);
     // drive_straight_poc();
     // delay(5000);
@@ -141,7 +143,7 @@ STATE running()
     //     GYRO_reading();
     // #endif
     // BluetoothSerial.println("im about to call g28 :)");
-    delay(5000);
+    // delay(5000);
     // G28();
 
 #ifndef NO_BATTERY_V_OK

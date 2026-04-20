@@ -278,9 +278,9 @@ void drive_straight_poc()
 
 void turn_90_degrees(int cw_ccw_mode)
 {
-  const float Kp = 120.0;
-  const float Ki = 3.0;
-  const float Kd = 5.0;
+  const float Kp = 10.0;
+  const float Ki = 0.1;
+  const float Kd = 0.01;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 150;
 
@@ -304,7 +304,7 @@ void turn_90_degrees(int cw_ccw_mode)
     last_time = now;
 
     // GYRO_reading();
-    get_rotation_vector_yaw(); // updates robot_heading
+    GYRO_reading(); // updates robot_heading
     float current_heading = robot_heading;
     float error = angle_diff(target_heading, current_heading);
     float abs_error = fabs(error);
@@ -331,7 +331,7 @@ void turn_90_degrees(int cw_ccw_mode)
     BluetoothSerial.print("Turn err: ");
     BluetoothSerial.println(error * 180.0 / PI, 2);
 
-    delay(10);
+    delay(100);
   }
 
   stop();
