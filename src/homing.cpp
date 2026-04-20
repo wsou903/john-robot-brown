@@ -23,7 +23,7 @@ void G28()
       // BluetoothSerial.println(RSR);
       // delay(100);
       if(LSR > 100 && RSR > 100){
-        BluetoothSerial.println("too far lol");
+        // BluetoothSerial.println("too far lol");
       } else {
         float measurements[3] = {0};
         Align(measurements);
@@ -47,18 +47,18 @@ void Align(float *array)
   // positive turn is counterclockwise, so a larger right reading means the robot
   // is rotated clockwise and needs a positive correction.
   float turn_angle = atan2(rightFront - leftFront, SR_SPACING);
-  BluetoothSerial.print("turn angle: ");
-  delay(50);
-  BluetoothSerial.println(turn_angle);
-  delay(50);
+  // BluetoothSerial.print("turn angle: ");
+  // delay(50);
+  // BluetoothSerial.println(turn_angle);
+  // delay(50);
 
   array[0] = 0.0f;
   array[1] = ((leftFront + rightFront) * 0.5f) * cos(turn_angle) - 5.0f;
   array[2] = turn_angle;
 
-  BluetoothSerial.print("x: ");
-  delay(50);
-  BluetoothSerial.println(array[1]);
+  // BluetoothSerial.print("x: ");
+  // delay(50);
+  // BluetoothSerial.println(array[1]);
 
 }
 
