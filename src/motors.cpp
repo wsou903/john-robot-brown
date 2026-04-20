@@ -278,17 +278,15 @@ void drive_straight_poc()
 
 void turn_90_degrees(int cw_ccw_mode)
 {
-  const float Kp = 10.0;
-  const float Ki = 0.1;
-  const float Kd = 0.01;
+  const float Kp = 110.0;
+  const float Ki = 1;
+  const float Kd = 0.1;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 150;
 
-  float ang_val_ratios[n];
-  float omega_z = (cw_ccw_mode == 1) ? 1.0 : -1.0;
-  inverse_kinematics(0, 0, omega_z, ang_val_ratios);
 
-  float target_heading = robot_heading + ((cw_ccw_mode == 1) ? (PI / 2.0) : (-PI / 2.0));
+
+  float target_heading = get_rotation_vector_yaw() + ((cw_ccw_mode == 1) ? (PI / 2.0) : (-PI / 2.0));
   float prev_error = 0.0;
   float integral = 0.0;
   unsigned long last_time = micros();
@@ -303,9 +301,8 @@ void turn_90_degrees(int cw_ccw_mode)
     }
     last_time = now;
 
-    // GYRO_reading();
-    GYRO_reading(); // updates robot_heading
-    float current_heading = robot_heading;
+
+    float current_heading = get_rotation_vector_yaw(); // updates robot_heading
     float error = angle_diff(target_heading, current_heading);
     float abs_error = fabs(error);
 
@@ -321,15 +318,16 @@ void turn_90_degrees(int cw_ccw_mode)
     prev_error = error;
 
     float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
+    BluetoothSerial.println(output);
     float command = constrain(output, -max_output, max_output);
 
-    left_font_motor.writeMicroseconds(1500 - (ang_val_ratios[0] * command));
-    left_rear_motor.writeMicroseconds(1500 - (ang_val_ratios[2] * command));
-    right_rear_motor.writeMicroseconds(1500 + (ang_val_ratios[3] * command));
-    right_font_motor.writeMicroseconds(1500 + (ang_val_ratios[1] * command));
+    left_font_motor.writeMicroseconds(1500 - ( command));
+    left_rear_motor.writeMicroseconds(1500 - ( command));
+    right_rear_motor.writeMicroseconds(1500 - (command));
+    right_font_motor.writeMicroseconds(1500 - ( command));
 
-    BluetoothSerial.print("Turn err: ");
-    BluetoothSerial.println(error * 180.0 / PI, 2);
+    // BluetoothSerial.print("Turn err: ");
+    // BluetoothSerial.println(error * 180.0 / PI, 2);
 
     delay(100);
   }
