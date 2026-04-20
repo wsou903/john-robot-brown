@@ -99,7 +99,7 @@ void calibrateGyro()
   {
     if (bno08x.getSensorEvent(&sensorValue))
     {
-      if (sensorValue.sensorId == SH2_GYROSCOPE_UNCALIBRATED)
+      if (sensorValue.sensorId == SH2_GAME_ROTATION_VECTOR)
       {
         sum += sensorValue.un.gyroscope.z;
       }
@@ -116,12 +116,12 @@ void GYRO_reading()
 
   if (bno08x.wasReset())
   {
-    bno08x.enableReport(SH2_GYROSCOPE_UNCALIBRATED);
+    bno08x.enableReport(SH2_GAME_ROTATION_VECTOR);
   }
 
   if (bno08x.getSensorEvent(&sensorValue))
   {
-    if (sensorValue.sensorId == SH2_GYROSCOPE_UNCALIBRATED)
+    if (sensorValue.sensorId == SH2_GAME_ROTATION_VECTOR)
     {
       unsigned long now = micros();
       float gyroZ = sensorValue.un.gyroscope.z;
@@ -146,6 +146,7 @@ void GYRO_reading()
         robot_heading += 6.28;
 
       BluetoothSerial.println(rad);
+      
       // BluetoothSerial.println(robot_heading);
     }
   }
@@ -169,7 +170,7 @@ float get_rotation_vector_yaw()
       // Conversion to Yaw (Heading) in Radians
       // Range is -PI to +PI
       float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
-
+      BluetoothSerial.println(rad);
       return yaw;
     }
   }

@@ -90,7 +90,7 @@ STATE initialising()
   enable_motors();
 #ifndef NO_READ_GYRO
   SerialCom->println("Enabling Gyroscope...");
-  if (!bno08x.begin_I2C() || !bno08x.enableReport(SH2_GYROSCOPE_UNCALIBRATED, 10000))
+  if (!bno08x.begin_I2C() || !bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, 10000))
   {
     while (1)
     {
@@ -125,8 +125,8 @@ STATE running()
     // speed_change_smooth();
     // Serial.println("speed_val");
     // turn_90_degrees(1);
-    GYRO_reading();
-    // get_rotation_vector_yaw();
+    // GYRO_reading();
+    get_rotation_vector_yaw();
     // move(1, 0, 0);
     // drive_straight_poc();
     // delay(5000);
