@@ -23,8 +23,9 @@ float getLeftSR()
   // distSR2 = kfSR_L.updateEstimate(rawDist);
   float adcRaw = analogRead(pinIR_Short2);
   if(adcRaw == 0) adcRaw = 1;
-  float temp_val = 13*pow(adcRaw*0.0048828125, -1);
-   lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
+  float lastLefSR = pow((adcRaw / 1562610.0), (1.0 / -1.98778)); //sevans calibration
+  // float temp_val = 13*pow(adcRaw*0.0048828125, -1); // original calibration
+  // lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
    return lastLeftSR;
 }
 
@@ -32,8 +33,9 @@ float getRightSR()
 {
   float adcRaw = analogRead(pinIR_Short1);
   if(adcRaw == 0) adcRaw = 1;
-  float temp_val = 13*pow(adcRaw*0.0048828125, -1);
-   lastRightSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastRightSR;
+  float lastRightSR = pow((adcRaw / 31299.0), (1.0 / -1.067)); // sevan calibration
+  // float temp_val = 13*pow(adcRaw*0.0048828125, -1);
+  //  lastRightSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastRightSR;
   // float volt = analogRead(pinIR_Short1) * (5.0 / 1023.0);
   // float rawDist = 12.08 * pow(volt, -1.058);
   // distSR1 = kfSR_R.updateEstimate(rawDist);

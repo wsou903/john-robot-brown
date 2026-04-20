@@ -77,72 +77,72 @@ void slow_flash_LED_builtin()
   }
 }
 
-void AlignWithWall(int lr_sr_mode)
-{
+// void AlignWithWall(int lr_sr_mode)
+// {
 
-  float Kp = 2.0;
-  float Ki = 0.01;
-  float Kd = 0.001;
-  float tolerance = 1.0; // cm difference between sensors allowed
-  // int maxTurn = 60;
-  // int minTurn = 25;        // overcome motor deadzone if needed
-  float cumulative_error = 0;
-  float prev_error = 0;
-  float angle_error = 0;
+//   float Kp = 2.0;
+//   float Ki = 0.01;
+//   float Kd = 0.001;
+//   float tolerance = 1.0; // cm difference between sensors allowed
+//   // int maxTurn = 60;
+//   // int minTurn = 25;        // overcome motor deadzone if needed
+//   float cumulative_error = 0;
+//   float prev_error = 0;
+//   float angle_error = 0;
 
-  unsigned long giveUpTimer = millis(); // this makes it give up if it cant figure it out
-  unsigned long lastTime = giveUpTimer;
-  while (millis() - giveUpTimer < 5000)
-  {
+//   unsigned long giveUpTimer = millis(); // this makes it give up if it cant figure it out
+//   unsigned long lastTime = giveUpTimer;
+//   while (millis() - giveUpTimer < 5000)
+//   {
 
-    unsigned long now = millis();
-    float dt = (now - lastTime) / 1000.0; // in seconds
-    lastTime = now;
+//     unsigned long now = millis();
+//     float dt = (now - lastTime) / 1000.0; // in seconds
+//     lastTime = now;
 
-    if (lr_sr_mode == 1)
-    {
-      angle_error = getRightLR() - getLeftLR();
-    }
-    else
-    {
-      angle_error = getRightSR() - getLeftSR();
-    }
+//     if (lr_sr_mode == 1)
+//     {
+//       angle_error = getRightLR() - getLeftLR();
+//     }
+//     else
+//     {
+//       angle_error = getRightSR() - getLeftSR();
+//     }
 
-    // stop condition
-    if (abs(angle_error) < tolerance)
-    {
-      stop();
-      // ############################################ WE CAN ZERO THE IMU HERE #####################################
-      robot_heading = 0.0; // it is zerod --------------------------------------------------------------------------------------------------------------------
-      break;
-    }
+//     // stop condition
+//     if (abs(angle_error) < tolerance)
+//     {
+//       stop();
+//       // ############################################ WE CAN ZERO THE IMU HERE #####################################
+//       robot_heading = 0.0; // it is zerod --------------------------------------------------------------------------------------------------------------------
+//       break;
+//     }
 
-    cumulative_error += (angle_error * dt);
-    float d_error = (angle_error - prev_error) / dt;
-    float turn = (Kp * angle_error) + (Ki * cumulative_error) + (Kd * d_error);
-    prev_error = angle_error;
+//     cumulative_error += (angle_error * dt);
+//     float d_error = (angle_error - prev_error) / dt;
+//     float turn = (Kp * angle_error) + (Ki * cumulative_error) + (Kd * d_error);
+//     prev_error = angle_error;
 
-    // clamp
-    // if (turn > maxTurn) turn = maxTurn;
-    // if (turn < -maxTurn) turn = -maxTurn;
+//     // clamp
+//     // if (turn > maxTurn) turn = maxTurn;
+//     // if (turn < -maxTurn) turn = -maxTurn;
 
-    // ensure minimum torque to actually move
-    // if (turn > 0 && turn < minTurn) turn = minTurn;
-    // if (turn < 0 && turn > -minTurn) turn = -minTurn;
+//     // ensure minimum torque to actually move
+//     // if (turn > 0 && turn < minTurn) turn = minTurn;
+//     // if (turn < 0 && turn > -minTurn) turn = -minTurn;
 
-    // rotate in place
-    int leftSpeed = -turn;
-    int rightSpeed = turn;
+//     // rotate in place
+//     int leftSpeed = -turn;
+//     int rightSpeed = turn;
 
-    leftSpeed = constrain(leftSpeed, -255, 255);
-    rightSpeed = constrain(rightSpeed, -255, 255);
+//     leftSpeed = constrain(leftSpeed, -255, 255);
+//     rightSpeed = constrain(rightSpeed, -255, 255);
 
-    left_font_motor.writeMicroseconds(1500 - leftSpeed);
-    left_rear_motor.writeMicroseconds(1500 - leftSpeed);
-    right_rear_motor.writeMicroseconds(1500 + rightSpeed);
-    right_font_motor.writeMicroseconds(1500 + rightSpeed);
+//     left_font_motor.writeMicroseconds(1500 - leftSpeed);
+//     left_rear_motor.writeMicroseconds(1500 - leftSpeed);
+//     right_rear_motor.writeMicroseconds(1500 + rightSpeed);
+//     right_font_motor.writeMicroseconds(1500 + rightSpeed);
 
-    delay(20);
-  }
-  stop();
-}
+//     delay(20);
+//   }
+//   stop();
+// }
