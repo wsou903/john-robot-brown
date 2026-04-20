@@ -7,30 +7,32 @@ void G28()
 {
   static unsigned long previous_millis;
   previous_millis = millis();
-  float error = 100;
   
-  while(error > 5){
-    if ((millis() - previous_millis) > 100){
+  while(true){
+    if ((millis() - previous_millis) > 500){
       previous_millis = millis();
       float LSR = getLeftSR();
       float RSR = getRightSR();
-      //print sensor valaues for debugging
+      // print sensor valaues for debugging
       // BluetoothSerial.print("LSR: "); 
+      // delay(50);
       // BluetoothSerial.print(LSR);
+      // delay(50);
       // BluetoothSerial.print(" RSR: ");
+      // delay(50);
       // BluetoothSerial.println(RSR);
-      if(LSR > 10 && RSR > 10){
-        BluetoothSerial.println("too far lol");
+      // delay(100);
+      if(LSR > 100 && RSR > 100){
+        // BluetoothSerial.println("too far lol");
       } else {
         float measurements[3] = {0};
         Align(measurements);
-        BluetoothSerial.print("x: ");
-        BluetoothSerial.print(measurements[0]);
-        BluetoothSerial.print(" y: ");
-        BluetoothSerial.print(measurements[1]);
-        BluetoothSerial.print(" angle: ");
-        BluetoothSerial.println(measurements[2]);
-        break;
+        // BluetoothSerial.print("x: ");
+        // BluetoothSerial.print(measurements[0]);
+        // BluetoothSerial.print(" y: ");
+        // BluetoothSerial.print(measurements[1]);
+        // BluetoothSerial.print(" angle: ");
+        // BluetoothSerial.println(measurements[2]);
       }
     }
   }
@@ -38,21 +40,25 @@ void G28()
 
 void Align(float *array)
 {
-  float LSR = getLeftSR();
-  float RSR = getRightSR();
+  float leftFront = getLeftSR();
+  float rightFront = getRightSR();
 
-  float angle = PI/2 - atan((SR_SPACING) / (RSR - LSR));
-  if (angle > PI/2){
-    angle = angle -PI;
-  }
-  float distance = ((LSR+RSR)/2) * cos(angle) - 5;
-  float x = distance * cos(angle);
-  float y = distance * sin(angle);
-  float rot_angle = angle;
+  // Right-handed frame with +z upward:
+  // positive turn is counterclockwise, so a larger right reading means the robot
+  // is rotated clockwise and needs a positive correction.
+  float turn_angle = atan2(rightFront - leftFront, SR_SPACING);
+  // BluetoothSerial.print("turn angle: ");
+  // delay(50);
+  // BluetoothSerial.println(turn_angle);
+  // delay(50);
 
-  array[0] = x;
-  array[1] = y;
-  array[2] = rot_angle;
+  array[0] = 0.0f;
+  array[1] = ((leftFront + rightFront) * 0.5f) * cos(turn_angle) - 5.0f;
+  array[2] = turn_angle;
+
+  // BluetoothSerial.print("x: ");
+  // delay(50);
+  // BluetoothSerial.println(array[1]);
 
 }
 

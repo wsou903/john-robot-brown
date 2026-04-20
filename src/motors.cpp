@@ -366,20 +366,24 @@ void strafe_straight_poc(){
   BluetoothSerial.println("YAYAYAYAY");
 }
 
-void turn_90_degrees(int cw_ccw_mode)
+void turn_n_degrees(int deg)
 {
-  const float Kp = 110.0;
-  const float Ki = 1;
-  const float Kd = 0.1;
+  const float Kp = 100.0; //calibrate them
+  const float Ki = 10;
+  const float Kd = 0.01;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 150;
   float last_print = millis();
 
+  const unsigned long required_settle_time = 250;
+  unsigned long settle_start_time = 0;
+  bool is_settling = false;
 
-
-  float target_heading = get_rotation_vector_yaw() + ((cw_ccw_mode == 1) ? (PI / 2.0) : (-PI / 2.0));
-  float prev_error = 0.0;
+  float rad_to_turn = (deg * PI) / 180.0;
+  float target_heading = get_rotation_vector_yaw() + rad_to_turn;
   float integral = 0.0;
+  float prev_error = 0.0;
+  unsigned long start_time = millis(); 
   unsigned long last_time = micros();
 
   while (true)
@@ -399,7 +403,23 @@ void turn_90_degrees(int cw_ccw_mode)
 
     if (abs_error <= tolerance)
     {
-      break;
+      if (!is_settling) 
+      {
+        // Just entered the target zone, start the timer
+        settle_start_time = millis();
+        is_settling = true;
+      } 
+      else if (millis() - settle_start_time >= required_settle_time) 
+      {
+        // Remained in the target zone long enough, success!
+        BluetoothSerial.println("Target reached and settled.");
+        break; 
+      }
+    }
+    else 
+    {
+      // Fell out of the target zone (overshot), reset the settling timer
+      is_settling = false;
     }
 
     integral += error * dt;
@@ -417,7 +437,7 @@ void turn_90_degrees(int cw_ccw_mode)
     right_rear_motor.writeMicroseconds(1500 - (command));
     right_font_motor.writeMicroseconds(1500 - ( command));
 
-        if (millis() - last_print > 100) {
+        if (millis() - last_print > 200) {
           BluetoothSerial.print("output: ");
             BluetoothSerial.println(output);
     BluetoothSerial.print("Turn err: ");
