@@ -5,8 +5,6 @@
 
 void G28()
 {
-      BluetoothSerial.println("entered g28:)");
-
   static unsigned long previous_millis;
   previous_millis = millis();
   float error = 100;
@@ -17,16 +15,21 @@ void G28()
       float LSR = getLeftSR();
       float RSR = getRightSR();
       //print sensor valaues for debugging
-      BluetoothSerial.print("LSR: "); 
-      BluetoothSerial.print(LSR);
-      BluetoothSerial.print(" RSR: ");
-      BluetoothSerial.println(RSR);
+      // BluetoothSerial.print("LSR: "); 
+      // BluetoothSerial.print(LSR);
+      // BluetoothSerial.print(" RSR: ");
+      // BluetoothSerial.println(RSR);
       if(LSR > 10 && RSR > 10){
         BluetoothSerial.println("too far lol");
       } else {
-        BluetoothSerial.println("NOT to far lol im about to call drive_straight");
-
-        drive_straight_poc();
+        float measurements[3] = {0};
+        Align(measurements);
+        BluetoothSerial.print("x: ");
+        BluetoothSerial.print(measurements[0]);
+        BluetoothSerial.print(" y: ");
+        BluetoothSerial.print(measurements[1]);
+        BluetoothSerial.print(" angle: ");
+        BluetoothSerial.println(measurements[2]);
         break;
       }
     }
