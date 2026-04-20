@@ -359,10 +359,15 @@ void strafe_straight_poc(){
     // // clamping?? idk
     // gyro_u = constrain(gyro_u, -80, 80);
 
-    left_font_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
-    left_rear_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
-    right_font_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
-    right_rear_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
+    // left_font_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
+    // left_rear_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
+    // right_font_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
+    // right_rear_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
+
+    left_font_motor.writeMicroseconds(  1500 - gyro_u);
+    left_rear_motor.writeMicroseconds(  1500 - gyro_u);
+    right_font_motor.writeMicroseconds( 1500 - gyro_u);
+    right_rear_motor.writeMicroseconds( 1500 - gyro_u);
 
     // DEBUGS 
     if (millis() - last_print > 100) {
