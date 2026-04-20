@@ -41,33 +41,20 @@ void strafe_straight_poc(){
 
   // sets the current wall distance to be the r(t)
   // sets current gyro to become the reference angle
-  float lr_initial = avg_lr_read;
   gyro_read = get_rotation_vector_yaw();
   float gyro_initial = gyro_read;
-  ReadUSSensor();
-  us_read = distanceUS;
+  us_read = getUSDistance();
   float us_initial = us_read;
-
 
   // loop
   while (!wall_proximity){
-    
-    ReadIRSensors();
-    avg_lr_read = (distLR1 + distLR2) / 2.0;
+
     gyro_read = get_rotation_vector_yaw();
 
-    // Short range IR sensor outputs Right and Left
-    float sr_right = pow((adcRaw3 / 31299.0), (1.0 / -1.067));
-    float sr_left = pow((adcRaw4 / 1562610.0), (1.0 / -1.98778));
+    float sr_right = getRightSR();
+    float sr_left = getLeftSR();
 
-    ReadUSSensor();
-    us_read = distanceUS;
-
-    // BluetoothSerial.print("lr1 dist: ");
-    // BluetoothSerial.println(distLR1);
-    // BluetoothSerial.print("lr2 dist: ");
-    // BluetoothSerial.println(distLR2);
-
+    us_read = getUSDistance();
 
     // STOP CONDITION
     if (sr_left < 60 || sr_right < 60) {
@@ -78,7 +65,6 @@ void strafe_straight_poc(){
     }
 
     // error calcs
-    err_ir = lr_initial - avg_lr_read;
     err_gyro = angle_diff(gyro_initial, gyro_read);
     err_us = us_initial - us_read;
 
@@ -90,17 +76,13 @@ void strafe_straight_poc(){
     prev_err_gyro = err_gyro;
 
     // integral terms and windup prevention
-    integral_sum_ir += err_ir; 
     integral_sum_gyro += err_gyro;
     integral_sum_us += err_us;
     float int_clamp = 100;
-    integral_sum_ir = constrain(integral_sum_ir, -int_clamp, int_clamp);
     integral_sum_gyro = constrain(integral_sum_gyro, -int_clamp, int_clamp);
     integral_sum_us = constrain(integral_sum_us, -int_clamp, int_clamp);
 
-
     // control effort calcs
-    ir_u = kp_ir *  err_ir + ki_ir * integral_sum_ir;
     gyro_u = kp_gyro * err_gyro + ki_gyro * integral_sum_gyro + kd_gyro * d_err;
     us_u = kp_us * err_us; // + ki_us * integral_sum_us;
 
