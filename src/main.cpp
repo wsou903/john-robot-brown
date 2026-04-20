@@ -102,7 +102,7 @@ STATE initialising()
   init_slam();
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
-  // G28(); // homing to get to corner
+  G28(); // homing to get to corner
   // farming_init();
   SerialCom->println("RUNNING STATE...");
 
