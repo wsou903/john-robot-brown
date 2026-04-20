@@ -78,8 +78,8 @@ float getUSDistance()
 
   long duration = pulseIn(PIN_ECHO, HIGH);
   float raw = (duration * 0.0343) / 2.0;
-     lastUS =  (alpha_US * raw) + (1.0 - alpha_US) * lastUS;
-
+    //  lastUS =  (alpha_US * raw) + (1.0 - alpha_US) * lastUS;
+  lastUS = raw;
   // if (raw <= 0 || raw > 400)
   // {
   //   return raw; // return last good global if out of range
