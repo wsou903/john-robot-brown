@@ -15,7 +15,7 @@ void ccw();
 void cw();
 void strafe_left();
 void strafe_right();
-void quarter_turn(int cw_ccw_mode);
+void turn_90_degrees(int cw_ccw_mode);
 void move(float x, float y, float z);
 void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_ratio);
 void drive_straight_poc();
