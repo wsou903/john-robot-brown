@@ -152,8 +152,6 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
   BluetoothSerial.println("Ratios: " + String(ang_vel_ratio[0], 2) + ", " + String(ang_vel_ratio[1], 2) + ", " + String(ang_vel_ratio[2], 2) + ", " + String(ang_vel_ratio[3], 2));
 }
 
-
-
 void drive_straight_poc()
 {
 
