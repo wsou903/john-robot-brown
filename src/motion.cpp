@@ -6,7 +6,6 @@
 
 void strafe_straight_poc(){
 
-  int ir_enabled = 0;
   int us_enabled = 1;
   int gyro_enabled = 1;
   int derivative_enabled = 0;
@@ -17,17 +16,14 @@ void strafe_straight_poc(){
   bool wall_proximity = false;
 
   // PID VALUES
-  float kp_ir = 0.5*ir_enabled;
   float kp_gyro = 120*5*gyro_enabled;
   float kp_us = 15*us_enabled;
 
-  float ki_ir = 0.001*ir_enabled;
   float ki_gyro = 3*gyro_enabled;
   float ki_us = 0.01*us_enabled;
 
   float kd_gyro = 5*derivative_enabled;
 
-  float err_ir;
   float err_gyro;
   float err_us;
 
@@ -36,7 +32,6 @@ void strafe_straight_poc(){
   float us_u;
 
   float gyro_read;
-  float avg_lr_read;
   float us_read;
 
   // sets the current wall distance to be the r(t)

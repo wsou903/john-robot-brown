@@ -9,6 +9,6 @@
   bool function_complete = false;
   static float prev_err_gyro = 0;
 
-    void strafe_straight_poc();
+  void strafe_straight_poc();
 
 #endif
