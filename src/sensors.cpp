@@ -170,8 +170,8 @@ float get_rotation_vector_yaw()
       // Conversion to Yaw (Heading) in Radians
       // Range is -PI to +PI
       float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
-      BluetoothSerial.println(yaw);
-      delay(80);
+      // BluetoothSerial.println(yaw);
+      // delay(80);
       return yaw;
     }
   }
