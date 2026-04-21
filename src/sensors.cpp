@@ -9,21 +9,22 @@ float alpha_LR = 0.1;
 float alpha_US = 0.1;
 
 // setup the kalman filter vars needs to be updated -------------------------------------------------------------------------------------------------
-// KalmanFilter kfUS(2.0, 2.0, 0.01);
-// KalmanFilter kfSR_L(2.0, 2.0, 0.01);
-// KalmanFilter kfSR_R(2.0, 2.0, 0.01);
-// KalmanFilter kfLR_L(5.0, 5.0, 0.02);
-// KalmanFilter kfLR_R(5.0, 5.0, 0.02);
+KalmanFilter kfUS(2.0, 2.0, 0.01);
+KalmanFilter kfSR_L(2.0, 2.0, 0.01);
+KalmanFilter kfSR_R(2.0, 2.0, 0.01);
+KalmanFilter kfLR_L(5.0, 5.0, 0.02);
+KalmanFilter kfLR_R(5.0, 5.0, 0.02);
 
 // short range ir (front)
 float getLeftSR()
 {
   // float volt = analogRead(pinIR_Short2) * (5.0 / 1023.0);
   // float rawDist = 12.08 * pow(volt, -1.058); // simplified curve from datasheet
-  // distSR2 = kfSR_L.updateEstimate(rawDist);
+  
   float adcRaw = analogRead(pinIR_Short2);
   if(adcRaw == 0) adcRaw = 1;
   float lastLeftSR = pow((adcRaw / 1562610.0), (1.0 / -1.98778)); //sevans calibration
+  lastLeftSR = kfSR_L.updateEstimate(lastLeftSR);
   // float temp_val = 13*pow(adcRaw*0.0048828125, -1); // original calibration
   // lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
    return lastLeftSR;
