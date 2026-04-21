@@ -9,7 +9,7 @@
 
 
 void G28();
-
-void Align(float* array);
+void AlignWithWall();
+void Align_calc(float* array);
 
 #endif
