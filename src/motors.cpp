@@ -378,9 +378,9 @@ void strafe_straight_poc(){
 
 void turn_n_degrees(int deg)
 {
-  const float Kp = 100.0; //calibrate them
-  const float Ki = 10;
-  const float Kd = 0.01;
+  const float Kp = 10.0; //calibrate them
+  const float Ki = 0;
+  const float Kd = 0;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 150;
   float last_print = millis();

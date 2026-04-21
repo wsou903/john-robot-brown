@@ -126,7 +126,7 @@ STATE running()
     // //     SerialCom->println("RUNNING---------");
     // speed_change_smooth();
     // Serial.println("speed_val");
-    // turn_n_degrees(111);
+    turn_n_degrees(90);
     // GYRO_reading();
     // get_rotation_vector_yaw();
     // move(1, 0, 0);
@@ -148,8 +148,8 @@ STATE running()
     // delay(5000);
     // G28();
 
-      drive_straight_poc();
-      strafe_straight_poc();
+      // drive_straight_poc();
+      // strafe_straight_poc();
       function_complete = true;
 
 #ifndef NO_BATTERY_V_OK
