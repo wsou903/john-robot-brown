@@ -198,7 +198,7 @@ void drive_straight_poc()
   // loop
   while (!wall_proximity){
 
-    if (getRightSR() < 60 || getLeftSR() < 60) {
+    if (getRightSR() <  60 || getLeftSR() < 60) {
       wall_proximity = true;
       stop();
       break;

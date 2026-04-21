@@ -148,11 +148,9 @@ STATE running()
     // delay(5000);
     // G28();
 
-    if (function_complete == false) {
       drive_straight_poc();
-    } else {
       strafe_straight_poc();
-    }
+      function_complete = true;
 
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
