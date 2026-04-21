@@ -124,30 +124,19 @@ STATE running()
     // previous_millis = millis();
 
     // //     SerialCom->println("RUNNING---------");
-    drive_tothis_poc(30);
+    // drive_tothis_poc(30);
     // speed_change_smooth();
     // Serial.println("speed_val");
-    // turn_n_degrees(90);
-    // GYRO_reading();
-    // get_rotation_vector_yaw();
-    // move(1, 0, 0);
-    // drive_straight_poc();
-    // delay(5000);
-    // move(0, 1, 0);
-    // delay(5000);
-    // move(0, 0, 1);
-    // delay(5000);
-    // move(-1, 0 , 0);
-    // delay(5000);
-    // move(2, 1, 0);
-    // delay(5000);
-    // TestIRSensors();
+    turn_n_degrees(25);
+    delay(5000);
+    turn_n_degrees(90);
+    delay(5000);
+    turn_n_degrees(180);
+   delay(30000);
     // #ifndef NO_READ_GYRO
     //     GYRO_reading();
     // #endif
-    // BluetoothSerial.println("im about to call g28 :)");
-    // delay(5000);
-    // G28();
+
 
       // drive_straight_poc();
       // strafe_straight_poc();

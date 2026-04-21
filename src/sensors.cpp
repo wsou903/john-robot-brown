@@ -159,6 +159,9 @@ void GYRO_reading()
 
 float get_rotation_vector_yaw()
 {
+
+  static float last_yaw = 0.0;
+  static bool first_reading = true;
   if (bno08x.getSensorEvent(&sensorValue))
   {
     if (sensorValue.sensorId == SH2_GAME_ROTATION_VECTOR)
@@ -171,13 +174,17 @@ float get_rotation_vector_yaw()
 
       // Conversion to Yaw (Heading) in Radians
       // Range is -PI to +PI
-      float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
+      last_yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
       // BluetoothSerial.println(yaw);
       // delay(80);
-      return yaw;
+     first_reading = false;
     }
   }
-  return robot_heading; // Return last known if no new data
+  if (first_reading) {
+    return robot_heading; // or some default value
+  }
+  robot_heading = last_yaw; // Update global heading with the latest valid reading
+  return last_yaw; // Return the last valid yaw reading
 }
 
 
