@@ -1,65 +1,88 @@
-// #include <cmath>
-
 #include "homing.h"
 
 
 void G28()
 {
-  static unsigned long previous_millis;
-  previous_millis = millis();
-  
-  while(true){
-    if ((millis() - previous_millis) > 500){
-      previous_millis = millis();
-      float LSR = getLeftSR();
-      float RSR = getRightSR();
-      // print sensor valaues for debugging
-      // BluetoothSerial.print("LSR: "); 
-      // delay(50);
-      // BluetoothSerial.print(LSR);
-      // delay(50);
-      // BluetoothSerial.print(" RSR: ");
-      // delay(50);
-      // BluetoothSerial.println(RSR);
-      // delay(100);
-      if(LSR > 100 && RSR > 100){
-        // BluetoothSerial.println("too far lol");
-      } else {
-        float measurements[3] = {0};
-        Align(measurements);
-        // BluetoothSerial.print("x: ");
-        // BluetoothSerial.print(measurements[0]);
-        // BluetoothSerial.print(" y: ");
-        // BluetoothSerial.print(measurements[1]);
-        // BluetoothSerial.print(" angle: ");
-        // BluetoothSerial.println(measurements[2]);
-      }
-    }
-  }
+  drive_straight_poc();
+  AlignWithWall();
+  strafe_straight_poc(1);
+  AlignWithWall();
 }
 
-void Align(float *array)
+void AlignWithWall()
 {
-  float leftFront = getLeftSR();
-  float rightFront = getRightSR();
+  float movement[2] = {0};
+  bool angle_happy = false;
+  bool distance_happy = false;
+  while (!angle_happy || !distance_happy)
+  {
+    Align_calc(movement);
+    if (abs(movement[1]) < 0.05)
+    {
+      angle_happy = true;
+    }
+    else 
+    {
+      turn_n_degrees(movement[1] * 180.0 / PI);
+      angle_happy = false; // if we had to turn, we might need to turn again after checking distance, so reset this flag
+      continue; // skip the distance check this loop, we want to check distance after we have the correct angle
+    }
 
-  // Right-handed frame with +z upward:
-  // positive turn is counterclockwise, so a larger right reading means the robot
-  // is rotated clockwise and needs a positive correction.
-  float turn_angle = atan2(rightFront - leftFront, SR_SPACING);
-  // BluetoothSerial.print("turn angle: ");
-  // delay(50);
-  // BluetoothSerial.println(turn_angle);
-  // delay(50);
+    if (abs(movement[0] - 65) < 5)
+    {
+      distance_happy = true;
+    }
+    else
+    {
+      drive_straight_poc(); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
+      distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
+      continue; // skip the angle check this loop, we want to check angle after we have
+    }
 
-  array[0] = 0.0f;
-  array[1] = ((leftFront + rightFront) * 0.5f) * cos(turn_angle) - 5.0f;
-  array[2] = turn_angle;
+  }
 
-  // BluetoothSerial.print("x: ");
-  // delay(50);
-  // BluetoothSerial.println(array[1]);
+}
 
+void Align_calc(float *array)
+{
+  const unsigned long delay_millis = 2000;
+  const unsigned long polling_rate = 10;
+  const unsigned long loops = delay_millis / polling_rate;
+
+  float leftFrontSum = 0.0f;
+  float rightFrontSum = 0.0f;
+
+  unsigned long next_sample_time = millis();
+  unsigned long sample_count = 0;
+
+  // 1. Collect and add up the readings immediately
+  while (sample_count < loops) 
+  {
+    if (millis() - next_sample_time >= polling_rate)
+    {
+      next_sample_time = millis();
+      
+      // Add the new reading directly to the running sum
+      leftFrontSum += getLeftSR();
+      rightFrontSum += getRightSR();
+      
+      ++sample_count;
+    }
+  }
+
+  float leftFrontAverage = 0.0f;
+  float rightFrontAverage = 0.0f;
+
+  // 2. Divide the total sum by the number of loops to get the average
+  if (loops > 0)
+  {
+    leftFrontAverage = leftFrontSum / loops;
+    rightFrontAverage = rightFrontSum / loops;
+  }
+
+  const float turn_angle = atan2(rightFrontAverage - leftFrontAverage, SR_SPACING);
+  array[0] = ((leftFrontAverage + rightFrontAverage) * 0.5f) * cos(turn_angle) - 5.0f;
+  array[1] = turn_angle;
 }
 
 // void drive_straight_poc(){
