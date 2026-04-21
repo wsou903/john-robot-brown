@@ -51,7 +51,8 @@ float getLeftLR()
     float adcRaw = analogRead(pinIR_Long1);
   if(adcRaw == 0) adcRaw = 1;
   float temp_val = 12343.85 * pow(adcRaw, -1.15);
-   lastLeftLR =  (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastLeftLR;
+  //  lastLeftLR =  (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastLeftLR;
+   lastLeftLR = temp_val;
   return lastLeftLR;
 }
 
@@ -63,7 +64,8 @@ float getRightLR()
       float adcRaw = analogRead(pinIR_Long2);
   if(adcRaw == 0) adcRaw = 1;
   float temp_val = 12343.85 * pow(adcRaw, -1.15);
-   lastRightLR =  (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastRightLR;
+  //  lastRightLR =  (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastRightLR;
+   lastRightLR = temp_val;
   return lastRightLR;
 }
 

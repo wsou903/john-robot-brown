@@ -7,6 +7,11 @@ void G28()
   AlignWithWall();
   strafe_straight_poc(1);
   AlignWithWall();
+  if (getLeftLR() > 750){
+    turn_n_degrees(90);
+  } else {
+    turn_n_degrees(180);
+  }
 }
 
 void AlignWithWall()

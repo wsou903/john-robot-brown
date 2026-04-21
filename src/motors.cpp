@@ -306,7 +306,7 @@ void drive_tothis_poc(float target_US_distance)
   // loop
   while (!wall_proximity){
 
-    if (abs(getUSDistance() - target_US_distance) < 5) {
+    if (abs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
       stop();
       break;
