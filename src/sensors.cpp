@@ -50,7 +50,11 @@ float getLeftLR() {
   // distLR2 = kfLR_L.updateEstimate(rawDist);
   float adcRaw = analogRead(pinIR_Long1);
   if (adcRaw == 0) adcRaw = 1;
-  float temp_val = 12343.85 * pow(adcRaw, -1.15);
+
+  float voltage = adcRaw * (5.0 / 1023.0);
+  float temp_val = pow((voltage / 17.6), -1.144);
+  // float temp_val = 12343.85 * pow(adcRaw, -1.15);
+
   lastLeftLR = (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastLeftLR;
   return lastLeftLR;
 }
@@ -61,7 +65,11 @@ float getRightLR() {
   // distLR1 = kfLR_R.updateEstimate(rawDist);
   float adcRaw = analogRead(pinIR_Long2);
   if (adcRaw == 0) adcRaw = 1;
-  float temp_val = 12343.85 * pow(adcRaw, -1.15);
+
+  float voltage = adcRaw * (5.0 / 1023.0);
+  float temp_val = pow((voltage / 16.038), -1.210);
+  // float temp_val = 12343.85 * pow(adcRaw, -1.15);
+
   lastRightLR = (alpha_LR * temp_val) + (1.0 - alpha_LR) * lastRightLR;
   return lastRightLR;
 }
