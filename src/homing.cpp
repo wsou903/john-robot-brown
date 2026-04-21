@@ -7,6 +7,11 @@ void G28()
   AlignWithWall();
   strafe_straight_poc(1);
   AlignWithWall();
+  if (getLeftLR() > 750){
+    turn_n_degrees(90);
+  } else {
+    turn_n_degrees(180);
+  }
 }
 
 void AlignWithWall()
@@ -34,7 +39,7 @@ void AlignWithWall()
     }
     else
     {
-      drive_straight_poc(); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
+      drive_tothis_poc(6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
       distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
       continue; // skip the angle check this loop, we want to check angle after we have
     }

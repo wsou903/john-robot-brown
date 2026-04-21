@@ -306,7 +306,7 @@ void drive_tothis_poc(float target_US_distance)
   // loop
   while (!wall_proximity){
 
-    if (abs(getUSDistance() - target_US_distance) < 5) {
+    if (abs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
       stop();
       break;
@@ -506,7 +506,7 @@ void strafe_straight_poc(int direction){
 
 void turn_n_degrees(int deg)
 {
-  const float Kp = 400; //calibrate them
+  const float Kp = 450; //calibrate them
   const float Ki = 0.1;
   const float Kd = 0.001;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
@@ -551,7 +551,7 @@ void turn_n_degrees(int deg)
       else if (millis() - settle_start_time >= required_settle_time) 
       {
         // Remained in the target zone long enough, success!
-        // BluetoothSerial.println("Target reached and settled.");
+        BluetoothSerial.println("Target reached and settled.");
         break; 
       }
     }
@@ -577,8 +577,8 @@ void turn_n_degrees(int deg)
     right_font_motor.writeMicroseconds(1500 - ( command));
 
     if (millis() - last_print > 200) {
-          BluetoothSerial.print("output: ");
-            BluetoothSerial.println(output);
+          // BluetoothSerial.print("output: ");
+          //   BluetoothSerial.println(output);
       BluetoothSerial.print("Turn err: ");
     BluetoothSerial.println(error * 180.0 / PI, 2);
     last_print = millis();
