@@ -9,11 +9,11 @@ float alpha_LR = 0.1;
 float alpha_US = 0.1;
 
 // setup the kalman filter vars needs to be updated -------------------------------------------------------------------------------------------------
-// KalmanFilter kfUS(2.0, 2.0, 0.01);
-// KalmanFilter kfSR_L(2.0, 2.0, 0.01);
-// KalmanFilter kfSR_R(2.0, 2.0, 0.01);
-// KalmanFilter kfLR_L(5.0, 5.0, 0.02);
-// KalmanFilter kfLR_R(5.0, 5.0, 0.02);
+KalmanFilter kfUS(2.0, 2.0, 0.01);
+KalmanFilter kfSR_L(2.0, 2.0, 0.01);
+KalmanFilter kfSR_R(2.0, 2.0, 0.01);
+KalmanFilter kfLR_L(5.0, 5.0, 0.02);
+KalmanFilter kfLR_R(5.0, 5.0, 0.02);
 
 // short range ir (front)
 float getLeftSR() {
