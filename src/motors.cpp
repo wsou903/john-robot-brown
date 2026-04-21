@@ -178,7 +178,7 @@ void drive_straight_poc()
   // float err_ir;
   float err_gyro;
 
-  // float ir_u;
+  float ir_u;
   float gyro_u;
 
   float gyro_read;
