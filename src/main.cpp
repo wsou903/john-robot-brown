@@ -126,8 +126,8 @@ STATE running()
     // #ifndef NO_READ_GYRO
     //     GYRO_reading();
     // #endif
-    G28();
-
+    // G28();
+    TestIRSensors();
 
       // drive_straight_poc();
       // strafe_straight_poc();

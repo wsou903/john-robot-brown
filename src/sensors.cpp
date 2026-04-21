@@ -172,13 +172,13 @@ void TestIRSensors() {
       Serial.print(",");
       Serial.print("SR2:");
       Serial.print(getLeftSR());
-      Serial.print("LR1:");
-      Serial.print(getLeftLR());
-      Serial.print(",");
-      Serial.print("LR2:");
-      Serial.print(getRightLR());
-      Serial.print("US:");
-      Serial.print(getUSDistance());
+      // Serial.print("LR1:");
+      // Serial.print(getLeftLR());
+      // Serial.print(",");
+      // Serial.print("LR2:");
+      // Serial.print(getRightLR());
+      // Serial.print("US:");
+      // Serial.print(getUSDistance());
 
       Serial.println();
 

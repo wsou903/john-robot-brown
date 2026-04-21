@@ -198,12 +198,17 @@ void drive_straight_poc()
   // loop
   while (!wall_proximity){
 
-    if (getRightSR() <  90 || getLeftSR() < 90) {
+    // if (getRightSR() <  85 || getLeftSR() < 85) {
+    //   wall_proximity = true;
+    //   stop();
+    //   break;
+    // }
+    
+    if (getUSDistance() < 15) {
       wall_proximity = true;
       stop();
       break;
     }
-    
     // avg_lr_read = (distLR1 + distLR2) / 2.0;
     gyro_read = get_rotation_vector_yaw();
 
@@ -516,7 +521,8 @@ void turn_n_degrees(int deg)
   const float Ki = 0.1;
   const float Kd = 0.001;
   const float tolerance = (5.0 * PI) / 180.0; // 2 degrees in radians
-  const int max_output = 150;
+  const int max_output = 200;
+  const int min_power = 75; // Adjust this! Find the minimum microsecond offset needed to move the robot.
 
 
   const unsigned long required_settle_time = 250;
@@ -575,7 +581,7 @@ void turn_n_degrees(int deg)
 
     float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
 
-    const int min_power = 50; // Adjust this! Find the minimum microsecond offset needed to move the robot.
+    
     if (output > 0 && output < min_power) {
       output = min_power;
     } else if (output < 0 && output > -min_power) {
