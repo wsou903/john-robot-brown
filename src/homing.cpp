@@ -27,6 +27,21 @@ void AlignWithWall()
   {
     delay(100); // add a small delay to prevent overwhelming the sensors and control system
     Align_calc(movement);
+    if (fabs(movement[0] - 65) < 5)
+    {
+      BluetoothSerial.print("distance happy: ");
+      BluetoothSerial.println(movement[0]);
+      distance_happy = true;
+    }
+    else
+    {
+      BluetoothSerial.print("distance sad, moving: ");
+      BluetoothSerial.println(movement[0]);
+      drive_tothis_poc((movement[0]/10.0) - 6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
+      distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
+      continue; // skip the angle check this loop, we want to check angle after we have
+    }
+
     if (fabs(movement[1]) < 0.05)
     {
       BluetoothSerial.print("angle happy: ");
@@ -42,27 +57,13 @@ void AlignWithWall()
       continue; // skip the distance check this loop, we want to check distance after we have the correct angle
     }
 
-    if (fabs(movement[0] - 65) < 5)
-    {
-      BluetoothSerial.print("distance happy: ");
-      BluetoothSerial.println(movement[0]);
-      distance_happy = true;
-    }
-    else
-    {
-      BluetoothSerial.print("distance sad, moving: ");
-      BluetoothSerial.println(movement[0]);
-      drive_tothis_poc(movement[0] - 6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
-      distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
-      continue; // skip the angle check this loop, we want to check angle after we have
-    }
-
     if (angle_happy && distance_happy)
     {
       aligned = true;
       BluetoothSerial.println("aligned with wall");
     }
   }
+  
 
 }
 

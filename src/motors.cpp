@@ -198,7 +198,7 @@ void drive_straight_poc()
   // loop
   while (!wall_proximity){
 
-    if (getRightSR() <  60 || getLeftSR() < 60) {
+    if (getRightSR() <  70 || getLeftSR() < 70) {
       wall_proximity = true;
       stop();
       break;
@@ -247,15 +247,15 @@ void drive_straight_poc()
     right_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
 
     // DEBUGS 
-    if (millis() - last_print > 100) {
+    // if (millis() - last_print > 100) {
       // BluetoothSerial.print("err_gyro: ");
       // BluetoothSerial.println(err_gyro, 4);
       // BluetoothSerial.println();
-      BluetoothSerial.print("gyro_u: ");
-      BluetoothSerial.println(gyro_u, 2);
-      BluetoothSerial.println();
-      last_print = millis();
-    }
+    //   BluetoothSerial.print("gyro_u: ");
+    //   BluetoothSerial.println(gyro_u, 2);
+    //   BluetoothSerial.println();
+    //   last_print = millis();
+    // }
 
 
     delay(10); // DELAY ///////////////
@@ -271,7 +271,12 @@ void drive_tothis_poc(float distance)
   // int ir_enabled = 0;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
-  float target_US_distance = getUSDistance() + distance;
+  float target_US_distance = getUSDistance() - distance;
+  BluetoothSerial.print("Target distance: ");
+  BluetoothSerial.println(target_US_distance);
+  delay(10);
+  BluetoothSerial.print("Current distance: ");
+  BluetoothSerial.println(getUSDistance());
   // lk its fine without the D term with just PI 120/3
 
   float last_print = millis();
@@ -584,7 +589,7 @@ void turn_n_degrees(int deg)
     BluetoothSerial.println(error * 180.0 / PI, 2);
     last_print = millis();
         }
-   
+    delay(10);
   }
 
   stop();
