@@ -86,6 +86,7 @@ STATE initialising()
 {
   // initialising
   SerialCom->println("INITIALISING....");
+  BluetoothSerial.println("INITIALISING....");
 
   enable_motors();
 #ifndef NO_READ_GYRO
@@ -105,6 +106,7 @@ STATE initialising()
   // G28(); // homing to get to corner
   // farming_init();
   SerialCom->println("RUNNING STATE...");
+  BluetoothSerial.println("RUNNING STATE...");
 
   return RUNNING;
 }
@@ -124,7 +126,7 @@ STATE running()
     // //     SerialCom->println("RUNNING---------");
     // speed_change_smooth();
     // Serial.println("speed_val");
-    turn_n_degrees(111);
+    // turn_n_degrees(111);
     // GYRO_reading();
     // get_rotation_vector_yaw();
     // move(1, 0, 0);
@@ -145,6 +147,8 @@ STATE running()
     // BluetoothSerial.println("im about to call g28 :)");
     // delay(5000);
     // G28();
+
+    strafe_straight_poc();
 
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
