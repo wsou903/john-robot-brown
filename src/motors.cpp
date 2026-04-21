@@ -314,12 +314,12 @@ void strafe_straight_poc(){
     us_read = getUSDistance();
 
     // STOP CONDITION
-    if (sr_left < 60 || sr_right < 60) {
-      wall_proximity = true;
-      stop();
-      delay(2000);
-      break;
-    }
+    // if (sr_left < 60 || sr_right < 60) {
+    //   wall_proximity = true;
+    //   stop();
+    //   delay(2000);
+    //   break;
+    // }
 
     // error calcs
     err_gyro = angle_diff(gyro_initial, gyro_read);
