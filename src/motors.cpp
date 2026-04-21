@@ -266,7 +266,7 @@ void drive_straight_poc()
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
-void strafe_straight_poc(){
+void strafe_straight_poc(int direction){
 
   int us_enabled = 1;
   int gyro_enabled = 1;
@@ -346,10 +346,22 @@ void strafe_straight_poc(){
     // // clamping?? idk
     // gyro_u = constrain(gyro_u, -80, 80);
 
-    left_font_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
-    left_rear_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
-    right_font_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
-    right_rear_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
+    // get if right or left 
+
+    if (direction == 1){
+      // strafe right
+      left_font_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
+      left_rear_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
+      right_font_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
+      right_rear_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
+    } else {
+      // strafe left
+      left_font_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
+      left_rear_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
+      right_font_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
+      right_rear_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
+    }
+
 
     // left_font_motor.writeMicroseconds(  1500 - gyro_u);
     // left_rear_motor.writeMicroseconds(  1500 - gyro_u);
