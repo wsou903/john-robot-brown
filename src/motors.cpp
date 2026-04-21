@@ -266,11 +266,12 @@ void drive_straight_poc()
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
-void drive_tothis_poc(float target_US_distance)
+void drive_tothis_poc(float distance)
 {
   // int ir_enabled = 0;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
+  float target_US_distance = getUSDistance() + distance;
   // lk its fine without the D term with just PI 120/3
 
   float last_print = millis();
@@ -306,7 +307,7 @@ void drive_tothis_poc(float target_US_distance)
   // loop
   while (!wall_proximity){
 
-    if (abs(getUSDistance() - target_US_distance) < 0.5) {
+    if (fabs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
       stop();
       break;
@@ -377,7 +378,7 @@ void drive_tothis_poc(float target_US_distance)
   }
         
   stop();
-  BluetoothSerial.println("YAYAYAYAY drive finished");
+  // BluetoothSerial.println("YAYAYAYAY drive finished");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
@@ -509,7 +510,7 @@ void turn_n_degrees(int deg)
   const float Kp = 450; //calibrate them
   const float Ki = 0.1;
   const float Kd = 0.001;
-  const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
+  const float tolerance = (5.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 150;
 
 
