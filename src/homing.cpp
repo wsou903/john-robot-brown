@@ -3,15 +3,18 @@
 
 void G28()
 {
+  BluetoothSerial.println("driving to wall");
   drive_straight_poc();
+  delay(100);
   AlignWithWall();
-  strafe_straight_poc(1);
-  AlignWithWall();
-  if (getLeftLR() > 750){
-    turn_n_degrees(90);
-  } else {
-    turn_n_degrees(180);
-  }
+  BluetoothSerial.println("Aligned!!!");
+  // strafe_straight_poc(1);
+  // AlignWithWall();
+  // if (getLeftLR() > 750){
+  //   turn_n_degrees(90);
+  // } else {
+  //   turn_n_degrees(180);
+  // }
 }
 
 void AlignWithWall()
@@ -19,31 +22,46 @@ void AlignWithWall()
   float movement[2] = {0};
   bool angle_happy = false;
   bool distance_happy = false;
-  while (!angle_happy || !distance_happy)
+  bool aligned = false;
+  while (!aligned)
   {
+    delay(100); // add a small delay to prevent overwhelming the sensors and control system
     Align_calc(movement);
-    if (abs(movement[1]) < 0.05)
+    if (fabs(movement[1]) < 0.05)
     {
+      BluetoothSerial.print("angle happy: ");
+      BluetoothSerial.println(movement[1]);
       angle_happy = true;
     }
     else 
     {
-      turn_n_degrees(movement[1] * 180.0 / PI);
+      BluetoothSerial.print("angle sad, rotating: ");
+      BluetoothSerial.println(movement[1]);
+      turn_n_degrees(-movement[1] * 180.0 / PI);
       angle_happy = false; // if we had to turn, we might need to turn again after checking distance, so reset this flag
       continue; // skip the distance check this loop, we want to check distance after we have the correct angle
     }
 
-    if (abs(movement[0] - 65) < 5)
+    if (fabs(movement[0] - 65) < 5)
     {
+      BluetoothSerial.print("distance happy: ");
+      BluetoothSerial.println(movement[0]);
       distance_happy = true;
     }
     else
     {
-      drive_tothis_poc(6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
+      BluetoothSerial.print("distance sad, moving: ");
+      BluetoothSerial.println(movement[0]);
+      drive_tothis_poc(movement[0] - 6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
       distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
       continue; // skip the angle check this loop, we want to check angle after we have
     }
 
+    if (angle_happy && distance_happy)
+    {
+      aligned = true;
+      BluetoothSerial.println("aligned with wall");
+    }
   }
 
 }
