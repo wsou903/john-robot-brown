@@ -11,6 +11,8 @@ float integral_sum_gyro;
 float integral_sum_us;
 bool function_complete = false;
 
+// global flags for completions (its like an fsm but shit)
+
 static float prev_err_gyro = 0;
 
 void speed_change_smooth()
@@ -194,6 +196,12 @@ void drive_straight_poc()
 
   // loop
   while (!wall_proximity){
+
+    if (getRightSR() < 60 || getLeftSR() < 60) {
+      wall_proximity = true;
+      stop();
+      break;
+    }
     
     // avg_lr_read = (distLR1 + distLR2) / 2.0;
     gyro_read = get_rotation_vector_yaw();
@@ -253,8 +261,8 @@ void drive_straight_poc()
   }
         
   stop();
-  BluetoothSerial.println("YAYAYAYAY");
-
+  BluetoothSerial.println("YAYAYAYAY drive finished");
+  function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
 void strafe_straight_poc(){
@@ -364,6 +372,7 @@ void strafe_straight_poc(){
         
   stop();
   BluetoothSerial.println("YAYAYAYAY");
+  function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
 void turn_n_degrees(int deg)

@@ -3,6 +3,8 @@
 
 #include "config.h"
 
+bool function_complete = false;
+
 
 // -- Code Prototypes --------------------------------------------------
 void speed_change_smooth();
