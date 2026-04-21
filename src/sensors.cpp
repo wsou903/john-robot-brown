@@ -20,10 +20,14 @@ float getLeftSR() {
 
   float adcRaw = analogRead(pinIR_Short2);
   if(adcRaw == 0) adcRaw = 1;
-  float lastLeftSR = pow((adcRaw / 1562610.0), (1.0 / -1.98778)); //sevans calibration
+  // float lastLeftSR = pow((adcRaw / 1562610.0), (1.0 / -1.98778)); //sevans calibration
+  float lastLeftSR = pow((adcRaw / 31299.0), (1.0 / -1.067)); 
   // lastLeftSR = kfSR_L.updateEstimate(lastLeftSR);
   // float temp_val = 13*pow(adcRaw*0.0048828125, -1); // original calibration
   // lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
+  if (lastLeftLR > 200){
+    lastLeftLR = 200;
+  }
   return lastLeftSR;
 }
 
@@ -32,6 +36,9 @@ float getRightSR() {
   if (adcRaw == 0) adcRaw = 1;
   float lastRightSR = pow((adcRaw / 31299.0), (1.0 / -1.067));  // sevan calibration
   // lastRightSR = kfSR_L.updateEstimate(lastRightSR);
+   if (lastRightLR > 200){
+    lastRightLR = 200;
+  }
   return lastRightSR;
 }
 
@@ -166,21 +173,24 @@ void TestIRSensors() {
   static unsigned long timer = millis();
 
   while (true) {
-    if ((millis() - timer) > 50) {
-      Serial.print("SR1:");
-      Serial.print(getRightSR());
-      Serial.print(",");
-      Serial.print("SR2:");
-      Serial.print(getLeftSR());
+    if ((millis() - timer) > 1000) {
+      BluetoothSerial.print("SR1:");
+      BluetoothSerial.println(getRightSR());
+      delay(50);
+      // BluetoothSerial.print(",");
+      BluetoothSerial.print("SR2:");
+      BluetoothSerial.println(getLeftSR());
+      delay(50);
       // Serial.print("LR1:");
       // Serial.print(getLeftLR());
       // Serial.print(",");
       // Serial.print("LR2:");
       // Serial.print(getRightLR());
-      // Serial.print("US:");
-      // Serial.print(getUSDistance());
+      BluetoothSerial.print("US:");
+      BluetoothSerial.print(getUSDistance());
 
-      Serial.println();
+      BluetoothSerial.println();
+      delay(50);
 
       timer = millis();
     }

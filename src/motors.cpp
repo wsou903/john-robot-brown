@@ -203,12 +203,17 @@ void drive_straight_poc()
     //   stop();
     //   break;
     // }
-    
-    if (getUSDistance() < 15) {
+    if ((getRightSR()+getLeftSR())/2 < 85){
       wall_proximity = true;
       stop();
       break;
     }
+    
+    // if (getUSDistance() < 15) {
+    //   wall_proximity = true;
+    //   stop();
+    //   break;
+    // }
     // avg_lr_read = (distLR1 + distLR2) / 2.0;
     gyro_read = get_rotation_vector_yaw();
 
