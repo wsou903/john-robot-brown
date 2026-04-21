@@ -551,7 +551,7 @@ void turn_n_degrees(int deg)
       else if (millis() - settle_start_time >= required_settle_time) 
       {
         // Remained in the target zone long enough, success!
-        // BluetoothSerial.println("Target reached and settled.");
+        BluetoothSerial.println("Target reached and settled.");
         break; 
       }
     }
@@ -567,7 +567,7 @@ void turn_n_degrees(int deg)
     float derivative = (error - prev_error) / dt;
     prev_error = error;
 
-    float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
+    float output = -(Kp * error) + (Ki * integral) + (Kd * derivative);
   
     float command = constrain(output, -max_output, max_output);
 
@@ -577,8 +577,8 @@ void turn_n_degrees(int deg)
     right_font_motor.writeMicroseconds(1500 - ( command));
 
     if (millis() - last_print > 200) {
-          BluetoothSerial.print("output: ");
-            BluetoothSerial.println(output);
+          // BluetoothSerial.print("output: ");
+          //   BluetoothSerial.println(output);
       BluetoothSerial.print("Turn err: ");
     BluetoothSerial.println(error * 180.0 / PI, 2);
     last_print = millis();
