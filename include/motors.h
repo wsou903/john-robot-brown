@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-bool function_complete = false;
+extern bool function_complete;
 
 
 // -- Code Prototypes --------------------------------------------------

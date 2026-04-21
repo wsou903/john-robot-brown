@@ -9,7 +9,8 @@ int n = 4;
 float integral_sum_ir;
 float integral_sum_gyro;
 float integral_sum_us;
-bool function_complete = false;
+
+bool function_complete = false; // global flag for function completion (its like an fsm but shit)
 
 // global flags for completions (its like an fsm but shit)
 
@@ -240,10 +241,10 @@ void drive_straight_poc()
     // right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
     // right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
 
-    left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
-    left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
-    right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
-    right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
+    left_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
+    left_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
+    right_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
+    right_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
 
     // DEBUGS 
     if (millis() - last_print > 100) {
