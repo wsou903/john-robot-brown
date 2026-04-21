@@ -198,7 +198,7 @@ void drive_straight_poc()
   // loop
   while (!wall_proximity){
 
-    if (getRightSR() <  70 || getLeftSR() < 70) {
+    if (getRightSR() <  90 || getLeftSR() < 90) {
       wall_proximity = true;
       stop();
       break;
@@ -262,7 +262,7 @@ void drive_straight_poc()
   }
         
   stop();
-  BluetoothSerial.println("YAYAYAYAY drive finished");
+  // BluetoothSerial.println("YAYAYAYAY drive finished");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
@@ -574,6 +574,13 @@ void turn_n_degrees(int deg)
     prev_error = error;
 
     float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
+
+    const int min_power = 50; // Adjust this! Find the minimum microsecond offset needed to move the robot.
+    if (output > 0 && output < min_power) {
+      output = min_power;
+    } else if (output < 0 && output > -min_power) {
+      output = -min_power;
+    }
   
     float command = constrain(output, -max_output, max_output);
 

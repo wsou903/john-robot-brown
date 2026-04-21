@@ -7,6 +7,7 @@ void G28()
   drive_straight_poc();
   delay(100);
   AlignWithWall();
+  delay(50);
   BluetoothSerial.println("Aligned!!!");
   // strafe_straight_poc(1);
   // AlignWithWall();
@@ -27,7 +28,7 @@ void AlignWithWall()
   {
     delay(100); // add a small delay to prevent overwhelming the sensors and control system
     Align_calc(movement);
-    if (fabs(movement[0] - 65) < 5)
+    if (fabs(movement[0] - 65) < 7.5)
     {
       BluetoothSerial.print("distance happy: ");
       BluetoothSerial.println(movement[0]);
@@ -37,12 +38,14 @@ void AlignWithWall()
     {
       BluetoothSerial.print("distance sad, moving: ");
       BluetoothSerial.println(movement[0]);
+      speed_val = 75;
       drive_tothis_poc((movement[0]/10.0) - 6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
+      speed_val = 150;
       distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
       continue; // skip the angle check this loop, we want to check angle after we have
     }
-
-    if (fabs(movement[1]) < 0.05)
+    delay(50);
+    if (fabs(movement[1]) < 0.1)
     {
       BluetoothSerial.print("angle happy: ");
       BluetoothSerial.println(movement[1]);
@@ -52,11 +55,11 @@ void AlignWithWall()
     {
       BluetoothSerial.print("angle sad, rotating: ");
       BluetoothSerial.println(movement[1]);
-      turn_n_degrees(-movement[1] * 180.0 / PI);
+      turn_n_degrees(movement[1] * 180.0 / PI);
       angle_happy = false; // if we had to turn, we might need to turn again after checking distance, so reset this flag
       continue; // skip the distance check this loop, we want to check distance after we have the correct angle
     }
-
+    delay(50);
     if (angle_happy && distance_happy)
     {
       aligned = true;
@@ -69,7 +72,7 @@ void AlignWithWall()
 
 void Align_calc(float *array)
 {
-  const unsigned long delay_millis = 2000;
+  const unsigned long delay_millis = 1000;
   const unsigned long polling_rate = 10;
   const unsigned long loops = delay_millis / polling_rate;
 
@@ -104,9 +107,12 @@ void Align_calc(float *array)
     rightFrontAverage = rightFrontSum / loops;
   }
 
-  const float turn_angle = atan2(rightFrontAverage - leftFrontAverage, SR_SPACING);
-  array[0] = ((leftFrontAverage + rightFrontAverage) * 0.5f) * cos(turn_angle) - 5.0f;
-  array[1] = turn_angle;
+ // Assuming left = positive angle. Swap the left/right variables in atan2f if you need right = positive.
+const float turn_angle = atan2f(leftFrontAverage - rightFrontAverage, SR_SPACING);
+
+// Subtract the physical robot offset first, THEN project to the perpendicular distance
+array[0] = (((leftFrontAverage + rightFrontAverage) * 0.5f) - 5.0f) * cosf(turn_angle);
+array[1] = turn_angle;
 }
 
 // void drive_straight_poc(){
