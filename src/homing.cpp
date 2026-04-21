@@ -1,5 +1,3 @@
-// #include <cmath>
-
 #include "homing.h"
 
 
@@ -7,59 +5,59 @@ void G28()
 {
   static unsigned long previous_millis;
   previous_millis = millis();
-  
+  // drive_straight_poc();
   while(true){
-    if ((millis() - previous_millis) > 500){
-      previous_millis = millis();
-      float LSR = getLeftSR();
-      float RSR = getRightSR();
-      // print sensor valaues for debugging
-      // BluetoothSerial.print("LSR: "); 
-      // delay(50);
-      // BluetoothSerial.print(LSR);
-      // delay(50);
-      // BluetoothSerial.print(" RSR: ");
-      // delay(50);
-      // BluetoothSerial.println(RSR);
-      // delay(100);
-      if(LSR > 100 && RSR > 100){
-        // BluetoothSerial.println("too far lol");
-      } else {
-        float measurements[3] = {0};
-        Align(measurements);
-        // BluetoothSerial.print("x: ");
-        // BluetoothSerial.print(measurements[0]);
-        // BluetoothSerial.print(" y: ");
-        // BluetoothSerial.print(measurements[1]);
-        // BluetoothSerial.print(" angle: ");
-        // BluetoothSerial.println(measurements[2]);
-      }
-    }
+    BluetoothSerial.println("G28: Aligning with wall...");
+    delay(50);
+    float movement[2] = {0};
+    Align(movement);
+    BluetoothSerial.print("x: ");
+    BluetoothSerial.print(movement[0]);
+    BluetoothSerial.print(" angle: ");
+    BluetoothSerial.println(movement[1]);
   }
+  
 }
 
 void Align(float *array)
+{const unsigned long delay_millis = 2000;
+const unsigned long polling_rate = 10;
+const unsigned long loops = delay_millis / polling_rate;
+
+float leftFrontSum = 0.0f;
+float rightFrontSum = 0.0f;
+
+unsigned long next_sample_time = millis();
+unsigned long sample_count = 0;
+
+// 1. Collect and add up the readings immediately
+while (sample_count < loops) 
 {
-  float leftFront = getLeftSR();
-  float rightFront = getRightSR();
+  if (millis() - next_sample_time >= polling_rate)
+  {
+    next_sample_time = millis();
+    
+    // Add the new reading directly to the running sum
+    leftFrontSum += getLeftSR();
+    rightFrontSum += getRightSR();
+    
+    ++sample_count;
+  }
+}
 
-  // Right-handed frame with +z upward:
-  // positive turn is counterclockwise, so a larger right reading means the robot
-  // is rotated clockwise and needs a positive correction.
-  float turn_angle = atan2(rightFront - leftFront, SR_SPACING);
-  // BluetoothSerial.print("turn angle: ");
-  // delay(50);
-  // BluetoothSerial.println(turn_angle);
-  // delay(50);
+float leftFrontAverage = 0.0f;
+float rightFrontAverage = 0.0f;
 
-  array[0] = 0.0f;
-  array[1] = ((leftFront + rightFront) * 0.5f) * cos(turn_angle) - 5.0f;
-  array[2] = turn_angle;
+// 2. Divide the total sum by the number of loops to get the average
+if (loops > 0)
+{
+  leftFrontAverage = leftFrontSum / loops;
+  rightFrontAverage = rightFrontSum / loops;
+}
 
-  // BluetoothSerial.print("x: ");
-  // delay(50);
-  // BluetoothSerial.println(array[1]);
-
+  const float turn_angle = atan2(rightFrontAverage - leftFrontAverage, SR_SPACING);
+  array[0] = ((leftFrontAverage + rightFrontAverage) * 0.5f) * cos(turn_angle) - 5.0f;
+  array[1] = turn_angle;
 }
 
 // void drive_straight_poc(){
