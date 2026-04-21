@@ -124,6 +124,7 @@ STATE running()
     // previous_millis = millis();
 
     // //     SerialCom->println("RUNNING---------");
+    drive_tothis_poc(30);
     // speed_change_smooth();
     // Serial.println("speed_val");
     // turn_n_degrees(90);
