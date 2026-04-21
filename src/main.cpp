@@ -146,7 +146,7 @@ STATE running()
     // #endif
     // BluetoothSerial.println("im about to call g28 :)");
     // delay(5000);
-    G28();
+    // G28();
 
       // drive_straight_poc();
       // strafe_straight_poc();
