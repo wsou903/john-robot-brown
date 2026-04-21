@@ -390,12 +390,12 @@ void strafe_straight_poc(int direction){
 
 void turn_n_degrees(int deg)
 {
-  const float Kp = 10.0; //calibrate them
-  const float Ki = 0;
-  const float Kd = 0;
+  const float Kp = 400; //calibrate them
+  const float Ki = 0.1;
+  const float Kd = 0.001;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 150;
-  float last_print = millis();
+
 
   const unsigned long required_settle_time = 250;
   unsigned long settle_start_time = 0;
@@ -405,14 +405,14 @@ void turn_n_degrees(int deg)
   float target_heading = get_rotation_vector_yaw() + rad_to_turn;
   float integral = 0.0;
   float prev_error = 0.0;
-  unsigned long start_time = millis(); 
   unsigned long last_time = micros();
+  unsigned long last_print = millis();
 
   while (true)
   {
     unsigned long now = micros();
     float dt = (now - last_time) / 1000000.0;
-    if (dt <= 0.0)
+    if (dt <= 0.00)
     {
       dt = 0.001;
     }
@@ -422,6 +422,7 @@ void turn_n_degrees(int deg)
     float current_heading = get_rotation_vector_yaw(); // updates robot_heading
     float error = angle_diff(target_heading, current_heading);
     float abs_error = fabs(error);
+
 
     if (abs_error <= tolerance)
     {
@@ -434,7 +435,7 @@ void turn_n_degrees(int deg)
       else if (millis() - settle_start_time >= required_settle_time) 
       {
         // Remained in the target zone long enough, success!
-        BluetoothSerial.println("Target reached and settled.");
+        // BluetoothSerial.println("Target reached and settled.");
         break; 
       }
     }
@@ -459,11 +460,12 @@ void turn_n_degrees(int deg)
     right_rear_motor.writeMicroseconds(1500 - (command));
     right_font_motor.writeMicroseconds(1500 - ( command));
 
-        if (millis() - last_print > 200) {
+    if (millis() - last_print > 200) {
           BluetoothSerial.print("output: ");
             BluetoothSerial.println(output);
-    BluetoothSerial.print("Turn err: ");
+      BluetoothSerial.print("Turn err: ");
     BluetoothSerial.println(error * 180.0 / PI, 2);
+    last_print = millis();
         }
    
   }

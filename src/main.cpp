@@ -127,20 +127,7 @@ STATE running()
     // speed_change_smooth();
     // Serial.println("speed_val");
     turn_n_degrees(90);
-    // GYRO_reading();
-    // get_rotation_vector_yaw();
-    // move(1, 0, 0);
-    // drive_straight_poc();
-    // delay(5000);
-    // move(0, 1, 0);
-    // delay(5000);
-    // move(0, 0, 1);
-    // delay(5000);
-    // move(-1, 0 , 0);
-    // delay(5000);
-    // move(2, 1, 0);
-    // delay(5000);
-    // TestIRSensors();
+  
     // #ifndef NO_READ_GYRO
     //     GYRO_reading();
     // #endif
