@@ -506,7 +506,7 @@ void strafe_straight_poc(int direction){
 
 void turn_n_degrees(int deg)
 {
-  const float Kp = 400; //calibrate them
+  const float Kp = 450; //calibrate them
   const float Ki = 0.1;
   const float Kd = 0.001;
   const float tolerance = (2.0 * PI) / 180.0; // 2 degrees in radians
@@ -567,7 +567,7 @@ void turn_n_degrees(int deg)
     float derivative = (error - prev_error) / dt;
     prev_error = error;
 
-    float output = -(Kp * error) + (Ki * integral) + (Kd * derivative);
+    float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
   
     float command = constrain(output, -max_output, max_output);
 

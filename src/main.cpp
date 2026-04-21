@@ -128,8 +128,11 @@ STATE running()
     // speed_change_smooth();
     // Serial.println("speed_val");
     turn_n_degrees(25);
-    delay(30000);
-   
+    delay(5000);
+    turn_n_degrees(90);
+    delay(5000);
+    turn_n_degrees(180);
+   delay(30000);
     // #ifndef NO_READ_GYRO
     //     GYRO_reading();
     // #endif
