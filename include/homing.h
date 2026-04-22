@@ -11,5 +11,7 @@
 void G28();
 void AlignWithWall();
 void Align_calc(float* array);
+void sweep();
+int find_min_index(float* array, int size);
 
 #endif

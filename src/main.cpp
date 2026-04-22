@@ -123,8 +123,10 @@ STATE running()
   { // Arduino style 500ms timed execution statement
     previous_millis = millis();
    
-    // G28();
-    budget_slam();
+    G28();
+    // sweep();
+    delay(30000);
+    // budget_slam();
     // TestIRSensors();
 
     // drive_straight_poc();

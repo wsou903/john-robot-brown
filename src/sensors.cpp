@@ -23,7 +23,7 @@ float getLeftSR() {
   if(adcRaw == 0) adcRaw = 1;
   // float lastLeftSR = pow((adcRaw / 1562610.0), (1.0 / -1.98778)); //sevans calibration
   float lastLeftSR = pow((adcRaw / 31299.0), (1.0 / -1.067)); 
-  lastLeftSR = kfSR_L.updateEstimate(lastLeftSR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
+  // lastLeftSR = kfSR_L.updateEstimate(lastLeftSR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
   // float temp_val = 13*pow(adcRaw*0.0048828125, -1); // original calibration
   // lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
   if (lastLeftSR > 200){
@@ -36,7 +36,7 @@ float getRightSR() {
   float adcRaw = analogRead(pinIR_Short1);
   if (adcRaw == 0) adcRaw = 1;
   float lastRightSR = pow((adcRaw / 31299.0), (1.0 / -1.067));  // sevan calibration
-  lastRightSR = kfSR_L.updateEstimate(lastRightSR);  // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
+  // lastRightSR = kfSR_L.updateEstimate(lastRightSR);  // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
    if (lastRightSR > 200){
     lastRightSR = 200;
   }
@@ -52,7 +52,7 @@ float getLeftLR() { // outputs in fucking cm WTF
 
   float voltage = adcRaw * (5.0 / 1023.0);
   float lastLeftLR = pow((voltage / 17.6), -1.144);
-  lastLeftLR = kfSR_L.updateEstimate(lastLeftLR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
+  // lastLeftLR = kfSR_L.updateEstimate(lastLeftLR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
   return lastLeftLR;
 }
 
@@ -62,7 +62,7 @@ float getRightLR() {
 
   float voltage = adcRaw * (5.0 / 1023.0);
   float lastRightLR = pow((voltage / 16.038), -1.210);
-  lastRightLR = kfSR_L.updateEstimate(lastRightLR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
+  // lastRightLR = kfSR_L.updateEstimate(lastRightLR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
 
   return lastRightLR;
 }
@@ -84,8 +84,8 @@ float getUSDistance() {
     return raw; // return last good global if out of range
   }
 
-  lastUS = kfUS.updateEstimate(raw); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
-  // lastUS = raw; // JUST PUT THIS LINE IN
+  // lastUS = kfUS.updateEstimate(raw); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
+  lastUS = raw; // JUST PUT THIS LINE IN
 
   return lastUS;  // return filtered value
 }

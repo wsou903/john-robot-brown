@@ -4,18 +4,68 @@
 void G28()
 {
   BluetoothSerial.println("driving to wall");
+  sweep(); // sweep to find the wall and turn towards it
   drive_straight_poc();
   delay(100);
   AlignWithWall();
   delay(50);
   BluetoothSerial.println("Aligned!!!");
-  strafe_straight_poc(1);
-  AlignWithWall();
-  if (getLeftLR() > 750){
-    turn_n_degrees(90);
-  } else {
-    turn_n_degrees(180);
+  // strafe_straight_poc(1);
+  // AlignWithWall();
+  // if (getLeftLR() > 750){
+  //   turn_n_degrees(90);
+  // } else {
+  //   turn_n_degrees(180);
+  // }
+}
+
+void sweep() {
+    // 1. Make these 'const' so the array size is known at compile time
+    const int spin_time = 2000;   // ms
+    const int sampling_rate = 50; // ms
+    const int n = spin_time / sampling_rate; // 200 elements
+
+    int i = 0;
+    
+    // Arrays can now be legally initialized with {0} because 'n' is a constant
+    float distances[n] = {0};
+    float angles[n] = {0};
+    
+    // 2. Remove 'static' and use 'unsigned long' (millis() returns unsigned long)
+    unsigned long timing = millis();
+
+    ccw(); // Start spinning
+    
+    while (i < n) {
+        if (millis() - timing >= sampling_rate) {
+            timing = millis();
+            distances[i] = getUSDistance();
+            angles[i] = get_rotation_vector_yaw();
+            i++;
+        }
+    }
+    stop(); // Stop spinning
+    delay(100); // Small delay to ensure the robot has stopped before processing data
+
+    // 3. Find min distance index
+    int turn_index = find_min_index(distances, n);
+
+    // 4. Calculate relative turn angle (Target Angle - Current Angle)
+    float target_angle = angles[turn_index];
+    float current_angle = get_rotation_vector_yaw();
+    float turn_amount = target_angle - current_angle; 
+
+    turn_n_degrees(turn_amount * 180.0 / PI); // Convert radians to degrees for the turn function
+}
+
+int find_min_index(float *array, int size){
+  int min_index = 0;
+  for (int i = 1; i < size; i++){
+    if (array[i] < array[min_index]){
+      min_index = i;
+    }
   }
+  return min_index;
 }
 
 void AlignWithWall()
@@ -45,7 +95,7 @@ void AlignWithWall()
       continue; // skip the angle check this loop, we want to check angle after we have
     }
     delay(50);
-    if (fabs(movement[1]) < 0.1)
+    if (fabs(movement[1]) < 0.05)
     {
       BluetoothSerial.print("angle happy: ");
       BluetoothSerial.println(movement[1]);
