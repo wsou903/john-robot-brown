@@ -26,7 +26,7 @@ unsigned long last_gyro_time = 0;
 float robotX = 0.0, robotY = 0.0;
 
 // motor speed vars
-int speed_val = 150;  // starting speed
+int speed_val = 200;  // starting speed
 int speed_change = 0; // used for ramping speed up/down
 int FRspeed_val = 0;
 int FLspeed_val = 0;
@@ -122,8 +122,11 @@ STATE running()
   if (millis() - previous_millis > 500)
   { // Arduino style 500ms timed execution statement
     previous_millis = millis();
-   
-    G28();
+    // float starting_dist = getUSDistance();
+    // drive_straight_poc();
+    // bool direction = 1; //true is strafing right, false is strafing left
+    strafe_thismuch_poc(1, 20);
+    // G28();
     // sweep();
     delay(30000);
     // budget_slam();

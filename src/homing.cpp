@@ -112,7 +112,7 @@ void AlignWithWall()
       BluetoothSerial.println(movement[0]);
       speed_val = 75;
       drive_tothis_poc((movement[0]/10.0) - 6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
-      speed_val = 150;
+      speed_val = 200;
       distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
       continue; // skip the angle check this loop, we want to check angle after we have
     }

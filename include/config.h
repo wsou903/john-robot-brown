@@ -40,9 +40,11 @@ const byte right_front = 47;
 #define FB_WHEEL_TO_WHEEL 16
 #define US_OFFSET_SIDE 10 // 10cm from center to left side
 #define US_OFFSET_FRONT 2 // 2cm from center to front
-#define TABLE_WIDTH 200.0 // these probs change --------------------------------------
-#define TABLE_HEIGHT 100.0
+#define TABLE_WIDTH 121.5 // these probs change --------------------------------------
+#define TABLE_HEIGHT 198.0
 #define SR_SPACING 55.0
+#define LR_TO_CENTER 6.5
+#define US_TO_CENTER 10.0
 
 // ------------ STATE MACHINE
 
