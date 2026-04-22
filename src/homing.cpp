@@ -10,7 +10,7 @@ void G28()
   AlignWithWall();
   delay(50);
   BluetoothSerial.println("Aligned!!!");
-  bool direction = 1;
+  bool direction = 1; //true is turning right, false is turning left
   if(getLeftLR() < getRightLR()){
     direction = 0;
   }
@@ -21,6 +21,17 @@ void G28()
   }
   drive_straight_poc();
   AlignWithWall();
+  if (direction){
+    turn_n_degrees(-90);
+    if (getUSDistance() < 150){
+      turn_n_degrees(-90);
+    }
+  } else {
+    turn_n_degrees(90);
+    if (getUSDistance() < 150){
+      turn_n_degrees(90);
+    }
+  }
   // strafe_straight_poc(direction);
   // AlignWithWall();
   // if (getLeftLR() > 750){
