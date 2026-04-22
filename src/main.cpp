@@ -122,16 +122,26 @@ STATE running()
   if (millis() - previous_millis > 500)
   { // Arduino style 500ms timed execution statement
     previous_millis = millis();
-
-    // #ifndef NO_READ_GYRO
-    //     GYRO_reading();
-    // #endif
+    turn_n_degrees(2);
+    delay(5000);
+    turn_n_degrees(4);
+    delay(5000);
+    turn_n_degrees(10);
+    delay(5000);
+    turn_n_degrees(45);
+    delay(5000);
+    turn_n_degrees(90);
+    delay(5000);
+    turn_n_degrees(180);
+    delay(5000);
+    turn_n_degrees(8);
+    delay(5000);
     // G28();
-    TestIRSensors();
+    // TestIRSensors();
 
-      // drive_straight_poc();
-      // strafe_straight_poc();
-      function_complete = true;
+    // drive_straight_poc();
+    // strafe_straight_poc();
+    function_complete = true;
 
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())

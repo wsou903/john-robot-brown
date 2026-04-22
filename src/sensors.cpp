@@ -186,8 +186,8 @@ void TestIRSensors() {
       // Serial.print(",");
       // Serial.print("LR2:");
       // Serial.print(getRightLR());
-      BluetoothSerial.print("US:");
-      BluetoothSerial.println(getUSDistance());
+      // BluetoothSerial.print("US:");
+      // BluetoothSerial.println(getUSDistance());
 
       BluetoothSerial.println();
       delay(50);

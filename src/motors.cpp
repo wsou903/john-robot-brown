@@ -198,16 +198,16 @@ void drive_straight_poc()
   // loop
   while (!wall_proximity){
 
-    // if (getRightSR() <  85 || getLeftSR() < 85) {
-    //   wall_proximity = true;
-    //   stop();
-    //   break;
-    // }
-    if ((getRightSR()+getLeftSR())/2 < 85){
+    if (getRightSR() <  85 || getLeftSR() < 85) {
       wall_proximity = true;
       stop();
       break;
     }
+    // if ((getRightSR()+getLeftSR())/2 < 85){
+    //   wall_proximity = true;
+    //   stop();
+    //   break;
+    // }
     
     // if (getUSDistance() < 15) {
     //   wall_proximity = true;
@@ -522,12 +522,12 @@ void strafe_straight_poc(int direction){
 
 void turn_n_degrees(int deg)
 {
-  const float Kp = 450; //calibrate them
+  const float Kp = 180; //calibrate them
   const float Ki = 0.1;
-  const float Kd = 0.001;
-  const float tolerance = (5.0 * PI) / 180.0; // 2 degrees in radians
+  const float Kd = 0.002;
+  const float tolerance = (1.0 * PI) / 180.0; // 2 degrees in radians
   const int max_output = 200;
-  const int min_power = 75; // Adjust this! Find the minimum microsecond offset needed to move the robot.
+  const int min_power = 60; // Adjust this! Find the minimum microsecond offset needed to move the robot.
 
 
   const unsigned long required_settle_time = 250;
