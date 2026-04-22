@@ -8,7 +8,7 @@
 #include "helpers.h"
 #include "homing.h"
 #include "slam.h"
-// #include "farming.h"
+#include "farming.h"
 
 // Gyroscope initialisation - Define your reset pin if you have it connected, otherwise use -1
 Adafruit_BNO08x bno08x(-1);
@@ -103,7 +103,7 @@ STATE initialising()
   init_slam();
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
-  G28(); // homing to get to corner
+  // G28(); // homing to get to corner ////////////////////////////////// G28 :)
   // farming_init();
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
@@ -135,6 +135,8 @@ STATE running()
     // drive_straight_poc();
     // strafe_straight_poc();
     // function_complete = true;
+
+    farming();
 
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())

@@ -1,122 +1,83 @@
 #include "farming.h"
+#include "sensors.h"
+#include "helpers.h"
+#include "motors.h"
 
-void farming_init()
-{
+// void farming_init()
+// {
 
-  turret_motor.write(90); // point the servo left
-  float field_width = getUSDistance();
+//   // turret_motor.write(90); // point the servo left
+//   int num_tramlines = int(TABLE_WIDTH) % JOHN_ROBOT_WIDTH; // find out how mant tramlines there are
+//   float laneTargets[num_tramlines];
 
-  int num_tramlines = int(field_width) % JOHN_ROBOT_WIDTH; // find out how mant tramlines there are
-  float laneTargets[num_tramlines];
+//   for (int john = 1; john <= num_tramlines; john++)
+//   {
+//     laneTargets[john - 1] = (TABLE_WIDTH / num_tramlines) * john;
+//   }
 
-  for (int john = 1; john <= num_tramlines; john++)
-  {
-    laneTargets[john - 1] = (field_width / num_tramlines) * john;
-  }
+//   // = {20, 44, 68, 92, 116}; // this needs to be variable, not hardcoded in to the code, like it reads with the ultrasonic sensor how far away it is and then divides that up into tramlines etc
 
-  // = {20, 44, 68, 92, 116}; // this needs to be variable, not hardcoded in to the code, like it reads with the ultrasonic sensor how far away it is and then divides that up into tramlines etc
+//   // --- PID --- PD implementation because error will always exist (Ki inappropriate)
+//   Kp = 2.0;
+//   Ki = 0.001;
+//   Kd = 0.01;
 
-  // --- PID --- PD implementation because error will always exist (Ki inappropriate)
-  Kp = 2.0;
-  Ki = 0.001;
-  Kd = 0.01;
+//   ortho_error = 0;
+//   prev_error = 0;
 
-  ortho_error = 0;
-  prev_error = 0;
+//   baseSpeed = 120;
+//   maxCorrection = 80;
+// }
 
-  baseSpeed = 120;
-  maxCorrection = 80;
-}
+void farming() {
+    BluetoothSerial.println("Starting farming trace...");
 
-void Farming()
-{
-
-  // This code traces 5 straight lines (lanes) across the course
-  // it assumes we start completely straight, and each time Farming() is called
-  // we increment the lane that we are tracing for 5 evenly spaced lines
-  // current issues is that it has a reference list for wall distances
-  // from the left wall, 20, 44, 68, etc... to keep constant but because the
-  // IR sensors only measure 80cm max, we probably need to swap sensors after
-  // lane 3. I dont do this atm so the code sort of breaks
-
-  float initial_dr = 0;
-  float initial_dl = 0;
-  float tramline_distance = 0;
-  enum
-  {
-    LEFT,
-    RIGHT
-  } referenceWall; // DEFAULTS LEFT
-
-  currentLane = 0; // MAKE GLOBAL
-
-  initial_dr = getRightLR(); // RIGHT
-  initial_dl = getLeftLR();  // LEFT
-
-  if (initial_dl < initial_dr)
-  {
-    referenceWall = LEFT;
-  }
-  else
-  {
-    referenceWall = RIGHT;
-  }
-
-  tramline_distance = getUSDistance(); // initial forward
-
-  bool end_of_tramline = false; // bool for if we've hit a proximity to the target wall
-
-  while (end_of_tramline == false)
-  {
-
-    if (getUSDistance() < 10)
-    { // STOP CONDITION
-      stop();
-      end_of_tramline = true;
-      currentLane++; // INCREMENTS THE LANE WE ARE IN FOR THE NEXT RUN
-      break;
+    // 1. Determine which direction the rest of the course is.
+    // 1 = Right, 0 = Left (matching your strafe functions)
+    int strafe_dir = 1; 
+    if (getLeftLR() > getRightLR()) {
+        strafe_dir = 0; // Left side is open
     }
 
-    float targetDist = laneTargets[currentLane];
+    // 2. Define Thresholds
+    const float LANE_WIDTH = 250.0;           // mm to strafe for each lane
+    const float REAR_WALL_TARGET = 1750.0;    // mm target for US sensor when driving backwards (course is 1991mm long)
+    const float SIDE_WALL_THRESHOLD = 250.0;  // mm distance to far wall to consider course complete
 
-    if (referenceWall == LEFT)
-    {
-      ortho_error = targetDist - getRightLR();
+    bool course_completed = false;
+    bool driving_forward = true;
+
+    while (!course_completed) {
+        
+        // --- 1. TRACE THE LANE ---
+        if (driving_forward) {
+            BluetoothSerial.println("Farming: Driving Forward...");
+            drive_straight_poc(); // Drives until SR sensors < 100mm
+        } else {
+            BluetoothSerial.println("Farming: Driving Backwards...");
+            drive_tothis_poc(REAR_WALL_TARGET); // Drives backward until US sensor reads ~1750mm
+        }
+
+        delay(300); // Allow momentum to settle 
+
+        // --- 2. CHECK IF WE REACHED THE END OF THE COURSE ---
+        // Look at the LR sensor in the direction we are strafing.
+        float side_dist = (strafe_dir == 1) ? getRightLR() : getLeftLR();
+        if (side_dist < SIDE_WALL_THRESHOLD) {
+            BluetoothSerial.println("Course fully traced. Farming complete.");
+            course_completed = true;
+            break; 
+        }
+
+        // --- 3. STRAFE TO NEXT LANE ---
+        BluetoothSerial.println("Farming: Strafing to next lane...");
+        strafe_thismuch_poc(strafe_dir, LANE_WIDTH);
+        
+        delay(300); // Allow momentum to settle before switching axis
+
+        // Flip direction for the next trace
+        driving_forward = !driving_forward;
     }
-    else
-    {
-      // ortho_error = distLR1 - targetDist;
-      ortho_error = targetDist - getLeftLR();
-      // FIX LATER this is to avoid a bug where laneTargets asks for say, 92cm, from left wall, and the closest sensor is right with 38cm, which we should accept as the new reference, but we dont at the moment, so it will then turn left and overshoot to the wrong wall to make the right sensor read 92cm, which is not what we want
-    }
-
-    // ########## BELOW IS FULLY CHATTED
-    // --- PD CONTROL ---
-    float derivative = ortho_error - prev_error;
-    float correction = Kp * ortho_error + Kd * derivative;
-
-    // clamp correction
-    if (correction > maxCorrection)
-      correction = maxCorrection;
-    if (correction < -maxCorrection)
-      correction = -maxCorrection;
-
-    prev_error = ortho_error;
-
-    // --- MOTOR SPEED MIXING ---
-    int leftSpeed = baseSpeed - correction;
-    int rightSpeed = baseSpeed + correction;
-
-    leftSpeed = constrain(leftSpeed, -255, 255);
-    rightSpeed = constrain(rightSpeed, -255, 255);
-
-    // --- APPLY TO MOTORS (preserving your convention) ---
-    left_font_motor.writeMicroseconds(1500 - leftSpeed);
-    left_rear_motor.writeMicroseconds(1500 - leftSpeed);
-    right_rear_motor.writeMicroseconds(1500 + rightSpeed);
-    right_font_motor.writeMicroseconds(1500 + rightSpeed);
-
-    delay(20); // control loop timing (~50Hz)
-
-  } // END OF WHILE LOOP
+    
+    stop();
 }
