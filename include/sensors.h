@@ -2,7 +2,7 @@
 #define SENSORS_H
 
 #include "config.h"
-#include "kalmanfilter.h"
+
 
 // these return the filtered distance in cm
 float getLeftSR();

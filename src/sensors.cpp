@@ -1,5 +1,6 @@
 
 #include "sensors.h"
+#include "kalmanfilter.h"
 
 float lastRightSR = 100, lastLeftSR = 100;
 float lastRightLR = 100, lastLeftLR = 100;
@@ -9,11 +10,11 @@ float alpha_LR = 0.1;
 float alpha_US = 0.1;
 
 // setup the kalman filter vars needs to be updated -------------------------------------------------------------------------------------------------
-KalmanFilter kfUS(2.0, 2.0, 0.01);
-KalmanFilter kfSR_L(2.0, 2.0, 0.01);
-KalmanFilter kfSR_R(2.0, 2.0, 0.01);
-KalmanFilter kfLR_L(5.0, 5.0, 0.02);
-KalmanFilter kfLR_R(5.0, 5.0, 0.02);
+KalmanFilter kfUS(2.0, 2.0, 2);
+KalmanFilter kfSR_L(2.0, 2.0, 1);
+KalmanFilter kfSR_R(2.0, 2.0, 1);
+KalmanFilter kfLR_L(5.0, 5.0, 1);
+KalmanFilter kfLR_R(5.0, 5.0, 1);
 
 // short range ir (front)
 float getLeftSR() {
@@ -22,7 +23,7 @@ float getLeftSR() {
   if(adcRaw == 0) adcRaw = 1;
   // float lastLeftSR = pow((adcRaw / 1562610.0), (1.0 / -1.98778)); //sevans calibration
   float lastLeftSR = pow((adcRaw / 31299.0), (1.0 / -1.067)); 
-  // lastLeftSR = kfSR_L.updateEstimate(lastLeftSR);
+  lastLeftSR = kfSR_L.updateEstimate(lastLeftSR);
   // float temp_val = 13*pow(adcRaw*0.0048828125, -1); // original calibration
   // lastLeftSR =  (alpha_SR * temp_val) + (1.0 - alpha_SR) * lastLeftSR;
   if (lastLeftLR > 200){
@@ -44,14 +45,14 @@ float getRightSR() {
 
 
 // long range ir (left)
-float getLeftLR() {
+float getLeftLR() { // outputs in fucking cm WTF
 
   float adcRaw = analogRead(pinIR_Long1);
   if (adcRaw == 0) adcRaw = 1;
 
   float voltage = adcRaw * (5.0 / 1023.0);
   float lastLeftLR = pow((voltage / 17.6), -1.144);
-  // lastLeftLR = kfSR_L.updateEstimate(lastLeftLR);
+  lastLeftLR = kfSR_L.updateEstimate(lastLeftLR);
   return lastLeftLR;
 }
 
@@ -61,7 +62,7 @@ float getRightLR() {
 
   float voltage = adcRaw * (5.0 / 1023.0);
   float lastRightLR = pow((voltage / 16.038), -1.210);
-  // lastRightLR = kfSR_L.updateEstimate(lastRightLR);
+  lastRightLR = kfSR_L.updateEstimate(lastRightLR);
 
   return lastRightLR;
 }
@@ -77,13 +78,13 @@ float getUSDistance() {
   long duration = pulseIn(PIN_ECHO, HIGH);
   float raw = (duration * 0.0343) / 2.0;
   //  lastUS =  (alpha_US * raw) + (1.0 - alpha_US) * lastUS;
-  lastUS = raw;
-  // if (raw <= 0 || raw > 400)
-  // {
-  //   return raw; // return last good global if out of range
-  // }
 
-  // distanceUS = kfUS.updateEstimate(raw); // kalman filter
+  if (raw <= 0 || raw > 400)
+  {
+    return raw; // return last good global if out of range
+  }
+
+  lastUS = kfUS.updateEstimate(raw); // kalman filter
 
   return lastUS;  // return filtered value
 }
@@ -132,9 +133,8 @@ void GYRO_reading() {
       if (robot_heading >= 6.28) robot_heading -= 6.28;
       if (robot_heading < 0) robot_heading += 6.28;
 
-      BluetoothSerial.println(rad);
+      // BluetoothSerial.println(rad);
 
-      // BluetoothSerial.println(robot_heading);
     }
   }
 
@@ -174,20 +174,20 @@ void TestIRSensors() {
 
   while (true) {
     if ((millis() - timer) > 1000) {
-      BluetoothSerial.print("SR1:");
-      BluetoothSerial.println(getRightSR());
-      delay(50);
+      // BluetoothSerial.print("SR1:");
+      // BluetoothSerial.println(getRightSR());
+      // delay(50);
       // BluetoothSerial.print(",");
-      BluetoothSerial.print("SR2:");
-      BluetoothSerial.println(getLeftSR());
-      delay(50);
+      // BluetoothSerial.print("SR2:");
+      // BluetoothSerial.println(getLeftSR());
+      // delay(50);
       // Serial.print("LR1:");
       // Serial.print(getLeftLR());
       // Serial.print(",");
       // Serial.print("LR2:");
       // Serial.print(getRightLR());
       BluetoothSerial.print("US:");
-      BluetoothSerial.print(getUSDistance());
+      BluetoothSerial.println(getUSDistance());
 
       BluetoothSerial.println();
       delay(50);

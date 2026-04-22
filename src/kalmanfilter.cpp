@@ -13,6 +13,7 @@ float KalmanFilter::updateEstimate(float mea)
     _kalman_gain = _err_estimate / (_err_estimate + _err_measure);              // calculate kalman gain
     _current_estimate = _last_estimate + _kalman_gain * (mea - _last_estimate); // update the current estimate
     _err_estimate = (1 - _kalman_gain) * _err_estimate;
+    _err_estimate = + fabsf(_last_estimate - _current_estimate) * _q;
     _last_estimate = _current_estimate; // save the estimate for next time
 
     return _current_estimate;
