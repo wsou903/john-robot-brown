@@ -26,7 +26,7 @@ unsigned long last_gyro_time = 0;
 float robotX = 0.0, robotY = 0.0;
 
 // motor speed vars
-int speed_val = 200;  // starting speed
+int speed_val = 150;  // starting speed
 int speed_change = 0; // used for ramping speed up/down
 int FRspeed_val = 0;
 int FLspeed_val = 0;
@@ -103,7 +103,7 @@ STATE initialising()
   init_slam();
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
-  // G28(); // homing to get to corner
+  G28(); // homing to get to corner
   // farming_init();
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
@@ -125,10 +125,10 @@ STATE running()
     // float starting_dist = getUSDistance();
     // drive_straight_poc();
     // bool direction = 1; //true is strafing right, false is strafing left
-    strafe_thismuch_poc(1, 20);
+    // strafe_thismuch_poc(1, 20);
     // G28();
     // sweep();
-    delay(30000);
+    // delay(30000);
     // budget_slam();
     // TestIRSensors();
 
