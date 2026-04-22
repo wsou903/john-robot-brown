@@ -437,6 +437,13 @@ void strafe_straight_poc(int direction){
 
   // loop
   while (!wall_proximity){
+    if(direction == 1){
+      if (getRightLR()  < 150){
+        wall_proximity = true;
+        stop();
+        break;
+      }
+    }
 
     gyro_read = get_rotation_vector_yaw();
 

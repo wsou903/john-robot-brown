@@ -10,7 +10,18 @@ void G28()
   AlignWithWall();
   delay(50);
   BluetoothSerial.println("Aligned!!!");
-  // strafe_straight_poc(1);
+  bool direction = 1;
+  if(getLeftLR() < getRightLR()){
+    direction = 0;
+  }
+  if(direction){
+    turn_n_degrees(-90);
+  } else {
+    turn_n_degrees(90);
+  }
+  drive_straight_poc();
+  AlignWithWall();
+  // strafe_straight_poc(direction);
   // AlignWithWall();
   // if (getLeftLR() > 750){
   //   turn_n_degrees(90);
@@ -21,7 +32,7 @@ void G28()
 
 void sweep() {
     // 1. Make these 'const' so the array size is known at compile time
-    const int spin_time = 2000;   // ms
+    const int spin_time = 2500;   // ms
     const int sampling_rate = 50; // ms
     const int n = spin_time / sampling_rate; // 200 elements
 
@@ -95,7 +106,7 @@ void AlignWithWall()
       continue; // skip the angle check this loop, we want to check angle after we have
     }
     delay(50);
-    if (fabs(movement[1]) < 0.05)
+    if (fabs(movement[1]) < 0.025)
     {
       BluetoothSerial.print("angle happy: ");
       BluetoothSerial.println(movement[1]);
