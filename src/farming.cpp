@@ -42,7 +42,7 @@ void farming()
         if (driving_forward)
         {
             // BluetoothSerial.println("Farming: Driving Forward...");
-            delay(75);
+            delay(100);
             drive_straight_poc(); // Drives until SR sensors < 100mm
             // drive_tothis_poc(FWD_WALL_TARGET);
             AlignWithWall();
@@ -56,7 +56,7 @@ void farming()
         else
         {
             // BluetoothSerial.println("Farming: Driving Backwards...");
-            delay(75);
+            delay(100);
             Align_calc(align_calc_output); // this needs to be put oput
             inherited_angle = align_calc_output[1];
             drive_tothis_poc_GV(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
@@ -66,7 +66,7 @@ void farming()
             // BluetoothSerial.println(getUSDistance() - STARTING_US_DIST);
         }
 
-        delay(75); // Allow momentum to settle
+        delay(100); // Allow momentum to settle
 
         // --- 2. CHECK IF WE REACHED THE END OF THE COURSE ---
         // Look at the LR sensor in the direction we are strafing.

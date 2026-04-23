@@ -162,7 +162,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
 
 void drive_straight_poc()
 {
-  // int ir_enabled = 0;
+  int ir_enabled = 1;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
@@ -181,28 +181,39 @@ void drive_straight_poc()
   float kd_gyro = 5 * derivative_enabled;
 
   //   // PID VALUES // OLD BEAUTIFUL 150 SPEED_VAL SPEEDS :) SORT OF OK
-  // // float kp_ir = 0.5*ir_enabled;
+  float kp_ir = 0.5*ir_enabled;
   // float kp_gyro = 120 * gyro_enabled;
 
-  // // float ki_ir = 0.001*ir_enabled;
+  float ki_ir = 0.001*ir_enabled;
   // float ki_gyro = 3 * gyro_enabled;
 
   // float kd_gyro = 5 * derivative_enabled;
 
-  // float err_ir;
+  float err_ir;
   float err_gyro;
 
   float ir_u;
   float gyro_u;
 
   float gyro_read;
-  // float avg_lr_read;
+  float avg_lr_read;
 
   // sets the current wall distance to be the r(t)
   // sets current gyro to become the reference angle
   // ReadIRSensors();
-  // avg_lr_read = (distLR1 + distLR2) / 2.0; // FIX THIS
-  // float lr_initial = avg_lr_read;
+  float LR_right = getRightLR();
+  float LR_left = getLeftLR();
+
+  if (LR_right > LR_left)
+  {
+    avg_lr_read = LR_right;
+  }
+  else
+  {
+    avg_lr_read = LR_left;
+  }
+
+  float lr_initial = avg_lr_read;
   gyro_read = get_rotation_vector_yaw();
   float gyro_initial = gyro_read;
 
@@ -231,7 +242,19 @@ void drive_straight_poc()
     //   stop();
     //   break;
     // }
-    // avg_lr_read = (distLR1 + distLR2) / 2.0;
+
+    LR_right = getRightLR();
+    LR_left = getLeftLR();
+
+    if (LR_right > LR_left)
+    {
+      avg_lr_read = LR_right;
+    }
+    else
+    {
+      avg_lr_read = LR_left;
+    }
+
     gyro_read = get_rotation_vector_yaw();
 
     // Short range IR sensor outputs Right and Left
@@ -239,7 +262,7 @@ void drive_straight_poc()
     // float sr_left = pow((adcRaw4 / 1562610.0), (1.0 / -1.98778));
 
     // error calcs
-    // err_ir = lr_initial - avg_lr_read;
+    err_ir = lr_initial - avg_lr_read;
     err_gyro = angle_diff(gyro_initial, gyro_read);
 
     // // deadband for stopping the error if its too low // removing for now because idk if its needed
@@ -250,13 +273,13 @@ void drive_straight_poc()
     prev_err_gyro = err_gyro;
 
     // integral terms and windup prevention
-    // integral_sum_ir += err_ir;
+    integral_sum_ir += err_ir;
     integral_sum_gyro += err_gyro;
-    // integral_sum_ir = constrain(integral_sum_ir, -1000, 1000);
+    integral_sum_ir = constrain(integral_sum_ir, -1000, 1000);
     integral_sum_gyro = constrain(integral_sum_gyro, -1000, 1000);
 
     // control effort calcs
-    // ir_u = kp_ir *  err_ir + ki_ir * integral_sum_ir;
+    ir_u = kp_ir *  err_ir + ki_ir * integral_sum_ir;
     gyro_u = kp_gyro * err_gyro + ki_gyro * integral_sum_gyro + kd_gyro * d_err;
 
     // clamping?? idk
