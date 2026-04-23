@@ -87,6 +87,7 @@ float getUSDistance() {
   float raw = (duration * 0.0343) / 2.0;
   //  lastUS =  (alpha_US * raw) + (1.0 - alpha_US) * lastUS;
 
+
   if (raw <= 0 || raw > 400)
   {
     return raw; // return last good global if out of range
@@ -183,20 +184,20 @@ void TestIRSensors() {
 
   while (true) {
     if ((millis() - timer) > 1000) {
-      BluetoothSerial.print("right lr:");
-      BluetoothSerial.println(getRightLR());
-      delay(500);
-      BluetoothSerial.print(",");
-      BluetoothSerial.print("left lr:");
-      BluetoothSerial.println(getLeftLR());
+      // BluetoothSerial.print("right lr:");
+      // BluetoothSerial.println(getRightLR());
+      // delay(500);
+      // BluetoothSerial.print(",");
+      // BluetoothSerial.print("left lr:");
+      // BluetoothSerial.println(getLeftLR());
       delay(500);
       // Serial.print("LR1:");
       // Serial.print(getLeftLR());
       // Serial.print(",");
       // Serial.print("LR2:");
       // Serial.print(getRightLR());
-      // BluetoothSerial.print("US:");
-      // BluetoothSerial.println(getUSDistance());
+      BluetoothSerial.print("US:");
+      BluetoothSerial.println(getUSDistance());
 
       BluetoothSerial.println();
       delay(50);

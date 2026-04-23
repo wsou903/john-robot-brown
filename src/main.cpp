@@ -125,11 +125,11 @@ STATE running()
     // delay(30000);
     // budget_slam();
     // TestIRSensors();
-    strafe_thismuch_poc(1, 100); // Strafe right for 100mm
+    // strafe_thismuch_poc(1, 100); // Strafe right for 100mm
+    // delay(5000);
+
+    farming();
     delay(30000);
-
-    // farming();
-
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
       return STOPPED;

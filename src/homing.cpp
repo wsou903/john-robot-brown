@@ -34,6 +34,9 @@ void G28()
       turn_n_degrees(90);
     }
   }
+  robotX=0;
+  robotY=0;
+  robot_heading=0;
   // strafe_straight_poc(direction);
   // AlignWithWall();
   // if (getLeftLR() > 750){

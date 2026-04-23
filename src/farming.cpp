@@ -30,7 +30,7 @@
 // }
 
 void farming() {
-    BluetoothSerial.println("Starting farming trace...");
+    // BluetoothSerial.println("Starting farming trace...");
 
     // 1. Determine which direction the rest of the course is.
     // 1 = Right, 0 = Left (matching your strafe functions)
@@ -41,7 +41,11 @@ void farming() {
 
     // 2. Define Thresholds
     const float LANE_WIDTH = 100.0;           // mm to strafe for each lane
-    const float REAR_WALL_TARGET = TABLE_HEIGHT - (JOHN_ROBOT_LENGTH+5);    // mm target for US sensor when driving backwards (course is 1991mm long)
+    const float REAR_WALL_TARGET = (getUSDistance());    // ) - ((JOHN_ROBOT_LENGTH/10)+0.5) mm target for US sensor when driving backwards (course is 1991mm long)
+    delay(100);
+    BluetoothSerial.print("rear wall target: ");
+    BluetoothSerial.println(REAR_WALL_TARGET);
+    delay(100);
     const float SIDE_WALL_THRESHOLD = 100;  // mm distance to far wall to consider course complete
 
     bool course_completed = false;
@@ -55,7 +59,7 @@ void farming() {
             drive_straight_poc(); // Drives until SR sensors < 100mm
         } else {
             BluetoothSerial.println("Farming: Driving Backwards...");
-            drive_tothis_poc(REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
+            drive_tothis_poc(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
         }
 
         delay(300); // Allow momentum to settle 

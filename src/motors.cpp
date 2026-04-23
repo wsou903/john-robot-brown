@@ -165,7 +165,7 @@ void drive_straight_poc()
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
 
-  float last_print = millis();
+  // float last_print = millis();
 
   bool wall_proximity = false;
 
@@ -284,12 +284,12 @@ void drive_tothis_poc(float distance)
   float target_US_distance = getUSDistance() - distance;
   BluetoothSerial.print("Target distance: ");
   BluetoothSerial.println(target_US_distance);
-  delay(10);
+  delay(100);
   BluetoothSerial.print("Current distance: ");
   BluetoothSerial.println(getUSDistance());
   // lk its fine without the D term with just PI 120/3
 
-  float last_print = millis();
+  // float last_print = millis();
 
   bool wall_proximity = false;
 
@@ -318,9 +318,10 @@ void drive_tothis_poc(float distance)
   // float lr_initial = avg_lr_read;
   gyro_read = get_rotation_vector_yaw();
   float gyro_initial = gyro_read;
+  unsigned long fucky = millis();
 
   // loop
-  while (!wall_proximity){
+  while (!wall_proximity || (millis() - fucky < 5000)){
 
     if (fabs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
@@ -501,9 +502,9 @@ void strafe_straight_poc(int direction){
       // BluetoothSerial.print("err_gyro: ");
       // BluetoothSerial.println(err_gyro, 4);
       // BluetoothSerial.println();
-      BluetoothSerial.print("us_u: ");
-      BluetoothSerial.println(us_u, 2);
-      BluetoothSerial.println();
+      // BluetoothSerial.print("us_u: ");
+      // BluetoothSerial.println(us_u, 2);
+      // BluetoothSerial.println();
       last_print = millis();
     }
 
@@ -521,21 +522,21 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
 
   int us_enabled = 1;
   int gyro_enabled = 1;
-  int derivative_enabled = 0;
+  int derivative_enabled = 1;
 
-
-  float last_print = millis();
+  unsigned long fuck = millis();
+  unsigned long last_print = millis();
 
   bool wall_proximity = false;
 
   bool sensor_in_range = (getLeftLR() > getRightLR()); //true if right sensor is in range, false if left sensor
     // PID VALUES
   float kp_gyro = 300*gyro_enabled;
-  float ki_gyro = 3*gyro_enabled;
-  float kd_gyro = 5*derivative_enabled;
+  float ki_gyro =1*gyro_enabled;
+  float kd_gyro = 0.001*derivative_enabled;
 
   float kp_us = 50*us_enabled;
-  float ki_us = 0.01*us_enabled;
+  float ki_us = 0.1*us_enabled;
 
   float err_gyro, err_us, ir_u ,gyro_u,us_u,gyro_read,us_read;
 
@@ -574,7 +575,7 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
   delay(100);
 
   // loop
-  while (!wall_proximity){
+  while (!wall_proximity || (millis() - fuck < 1000)){
 
     if(sensor_in_range){
       if(fabs(getRightLR() - target_sensor_distance) < 2){
@@ -645,15 +646,15 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
       // BluetoothSerial.print("target: ");
       // BluetoothSerial.println(target_sensor_distance, 4);
       // BluetoothSerial.println();
+      // delay(10);
+      // BluetoothSerial.print("current: ");
+      // if(sensor_in_range){
+      //   BluetoothSerial.println(getRightLR() - target_sensor_distance);
+      // } else {
+      // BluetoothSerial.println(getLeftLR() - target_sensor_distance);
+      // }
       delay(10);
-      BluetoothSerial.print("current: ");
-      if(sensor_in_range){
-        BluetoothSerial.println(getRightLR() - target_sensor_distance);
-      } else {
-      BluetoothSerial.println(getLeftLR() - target_sensor_distance);
-      }
-      delay(10);
-      BluetoothSerial.println();
+      // BluetoothSerial.println();
       last_print = millis();
     }
 
