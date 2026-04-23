@@ -29,7 +29,7 @@ void farming()
     BluetoothSerial.print("rear wall target: ");
     BluetoothSerial.println(REAR_WALL_TARGET);
     // delay(100);
-    const float SIDE_WALL_THRESHOLD = 150; // mm distance to far wall to consider course complete
+    const float SIDE_WALL_THRESHOLD = 100; // mm distance to far wall to consider course complete
 
     bool course_completed = false;
     bool driving_forward = true;
