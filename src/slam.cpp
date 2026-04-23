@@ -90,39 +90,39 @@ void budget_slam()
         robotY = sum_y / y_count;
 
     // save data to arrays (10Hz)
-    static unsigned long save_timer = 0;
-    if (now - save_timer > 100)
-    {
-        if (slam_point_count < pos_readings)
-        {
-            history_X[slam_point_count] = robotX;
-            history_Y[slam_point_count] = robotY;
-            slam_point_count++;
-        }
-        else
-        {
-
-            // BluetoothSerial.println("slam full");
-        }
-        save_timer = now;
-    }
-    // // 5. OUTPUT DATA
-    // static unsigned long print_timer = 0;
-    // if (now - print_timer > 100)
+    // static unsigned long save_timer = 0;
+    // if (now - save_timer > 100)
     // {
-    //     BluetoothSerial.print("DATA,");
-    //     delay(10);
-    //     BluetoothSerial.print(robotX);
-    //     delay(10);
-    //     BluetoothSerial.print(",");
-    //     delay(10);
-    //     BluetoothSerial.print(robotY);
-    //     delay(10);
-    //     BluetoothSerial.print(",");
-    //     delay(10);
-    //     BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
-    //     print_timer = now;
+    //     if (slam_point_count < pos_readings)
+    //     {
+    //         history_X[slam_point_count] = robotX;
+    //         history_Y[slam_point_count] = robotY;
+    //         slam_point_count++;
+    //     }
+    //     else
+    //     {
+
+    //         // BluetoothSerial.println("slam full");
+    //     }
+    //     save_timer = now;
     // }
+    // 5. OUTPUT DATA
+    static unsigned long print_timer = 0;
+    if (now - print_timer > 100)
+    {
+        BluetoothSerial.print("DATA,");
+        delay(10);
+        BluetoothSerial.print(robotX);
+        delay(10);
+        BluetoothSerial.print(",");
+        delay(10);
+        BluetoothSerial.print(robotY);
+        delay(10);
+        BluetoothSerial.print(",");
+        delay(10);
+        BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
+        print_timer = now;
+    }
 }
 
 // void budget_slam()
