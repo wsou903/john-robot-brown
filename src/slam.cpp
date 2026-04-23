@@ -88,40 +88,28 @@ void budget_slam()
         robotX = sum_x / x_count;
     if (y_count > 0)
         robotY = sum_y / y_count;
-
-    // save data to arrays (10Hz)
-    static unsigned long save_timer = 0;
-    if (now - save_timer > 100)
-    {
-        if (slam_point_count < pos_readings)
-        {
-            history_X[slam_point_count] = robotX;
-            history_Y[slam_point_count] = robotY;
-            slam_point_count++;
-        }
-        else
-        {
-
-            // BluetoothSerial.println("slam full");
-        }
-        save_timer = now;
-    }
+    BluetoothSerial.print(robotX);
+    BluetoothSerial.print(",");
+    BluetoothSerial.println(robotY);
 }
 
-void dump_slam_data()
-{
+// void dump_slam_data()
+// {
 
-    BluetoothSerial.println("X, Y"); // CSV Header
+//     BluetoothSerial.println("X, Y"); // CSV Header
 
-    for (int i = 0; i < slam_point_count; i++)
-    {
-        BluetoothSerial.print(history_X[i]);
-        BluetoothSerial.print(",");
-        BluetoothSerial.print(history_Y[i]);
-    }
+//     for (int i = 0; i < slam_point_count; i++)
+//     {
+//         SerialCom->println(history_X[i]);
+//         SerialCom->println(",");
+//         SerialCom->println(history_Y[i]);
+//         BluetoothSerial.print(history_X[i]);
+//         BluetoothSerial.print(",");
+//         BluetoothSerial.print(history_Y[i]);
+//     }
 
-    BluetoothSerial.println("end");
+//     BluetoothSerial.println("end");
 
-    // Optional: Reset the count if you plan to run the robot again without resetting power
-    // slam_point_count = 0;
-}
+//     // Optional: Reset the count if you plan to run the robot again without resetting power
+//     // slam_point_count = 0;
+// }
