@@ -9,7 +9,6 @@ extern float inherited_angle;
 
 extern int ir_drive_toggle;
 
-
 // -- Code Prototypes --------------------------------------------------
 void speed_change_smooth();
 void disable_motors();
@@ -27,7 +26,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
 void drive_straight_poc();
 void drive_tothis_poc_GV(float distance);
 void drive_tothis_poc(float target_US_distance);
-void strafe_straight_poc(int direction);
+void strafe_straight_poc(int input);
 void strafe_thismuch_poc(int direction, float distance);
 
 #endif
