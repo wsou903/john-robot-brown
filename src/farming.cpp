@@ -45,13 +45,13 @@ void farming()
             delay(75);
             drive_straight_poc(); // Drives until SR sensors < 100mm
             // drive_tothis_poc(FWD_WALL_TARGET);
-            // AlignWithWall();
+            AlignWithWall();
 
-            forward_counter++;
-            if (forward_counter % 1 == 0)
-            {
-                AlignWithWall();
-            }
+            // forward_counter++;
+            // if (forward_counter % 1 == 0)
+            // {
+            //     AlignWithWall();
+            // }
         }
         else
         {
