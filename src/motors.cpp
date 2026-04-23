@@ -164,7 +164,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
 
 void drive_straight_poc()
 {
-  int ir_enabled = 1*ir_drive_toggle;
+  int ir_enabled = 0*ir_drive_toggle;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
