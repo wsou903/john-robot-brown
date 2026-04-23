@@ -110,18 +110,17 @@ void budget_slam()
 
 void dump_slam_data()
 {
-
+    BluetoothSerial.println("--- DUMP START ---");
+    BluetoothSerial.print("Total Points Recorded: ");
+    BluetoothSerial.println(slam_point_count);
     BluetoothSerial.println("X, Y"); // CSV Header
 
     for (int i = 0; i < slam_point_count; i++)
     {
         BluetoothSerial.print(history_X[i]);
         BluetoothSerial.print(",");
-        BluetoothSerial.println(history_Y[i]);
+        BluetoothSerial.print(history_Y[i]);
     }
 
     BluetoothSerial.println("end");
-
-    // Optional: Reset the count if you plan to run the robot again without resetting power
-    // slam_point_count = 0;
 }
