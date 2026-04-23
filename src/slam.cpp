@@ -45,7 +45,7 @@ void budget_slam()
         // Calculate X (Pointing toward Front/Back walls)
         if (abs(c) > 0.707) // Within 45 degrees of X axis
         {
-            if (c > 0) sum_x += TABLE_HEIGHT - (distance * abs(c));
+            if (c > 0) sum_x += TABLE_LENGTH - (distance * abs(c));
             else       sum_x += (distance * abs(c));
             x_count++;
         }

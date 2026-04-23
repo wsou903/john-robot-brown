@@ -103,7 +103,7 @@ STATE initialising()
 
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
-  G28(); // homing to get to corner ////////////////////////////////// G28 :)
+  // G28(); // homing to get to corner ////////////////////////////////// G28 :)
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
 
@@ -129,7 +129,13 @@ STATE running()
     // delay(5000);
 
     farming();
-    delay(30000);
+    BluetoothSerial.println("course completion");
+    delay(5000);
+
+    // while(1) {
+    //   BluetoothSerial.println(getUSDistance());
+    //   delay(30);
+    // }
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
       return STOPPED;

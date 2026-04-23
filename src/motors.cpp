@@ -281,12 +281,12 @@ void drive_tothis_poc(float distance)
   // int ir_enabled = 0;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
-  float target_US_distance = getUSDistance() - distance;
-  BluetoothSerial.print("Target distance: ");
-  BluetoothSerial.println(target_US_distance);
-  delay(100);
-  BluetoothSerial.print("Current distance: ");
-  BluetoothSerial.println(getUSDistance());
+  float current_US = getUSDistance();
+  float target_US_distance = current_US - distance;
+  // BluetoothSerial.print("Target distance: ");
+  // BluetoothSerial.println(target_US_distance);
+  // delay(100);
+
   // lk its fine without the D term with just PI 120/3
 
   // float last_print = millis();
@@ -320,8 +320,10 @@ void drive_tothis_poc(float distance)
   float gyro_initial = gyro_read;
   unsigned long fucky = millis();
 
+  unsigned long last_print = millis();
+
   // loop
-  while (!wall_proximity && (millis() - fucky < 5000)){
+  while (!wall_proximity && (millis() - fucky < 15000)){
 
     if (fabs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
@@ -378,16 +380,12 @@ void drive_tothis_poc(float distance)
     }
 
 
-    // // DEBUGS 
-    // if (millis() - last_print > 100) {
-    //   // BluetoothSerial.print("err_gyro: ");
-    //   // BluetoothSerial.println(err_gyro, 4);
-    //   // BluetoothSerial.println();
-    //   BluetoothSerial.print("gyro_u: ");
-    //   BluetoothSerial.println(gyro_u, 2);
-    //   BluetoothSerial.println();
-    //   last_print = millis();
-    // }
+    // DEBUGS 
+    if (millis() - last_print > 200) {
+      BluetoothSerial.print("err_us:");
+      BluetoothSerial.println(current_US);
+      last_print = millis();
+    }
 
 
     delay(10); // DELAY ///////////////
