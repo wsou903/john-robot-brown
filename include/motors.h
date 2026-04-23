@@ -24,6 +24,7 @@ void turn_n_degrees(int cw_ccw_mode);
 void move(float x, float y, float z);
 void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_ratio);
 void drive_straight_poc();
+void drive_straight_poc_GV();
 void drive_tothis_poc_GV(float distance);
 void drive_tothis_poc(float target_US_distance);
 void strafe_straight_poc(int input);

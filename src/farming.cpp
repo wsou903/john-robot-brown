@@ -47,7 +47,8 @@ void farming()
         {
             // BluetoothSerial.println("Farming: Driving Forward...");
             delay(100);
-            drive_straight_poc(); // Drives until SR sensors < 100mm
+            // drive_straight_poc(); // Drives until SR sensors < 100mm
+            drive_straight_poc_GV();
             // drive_tothis_poc(FWD_WALL_TARGET);
             // AlignWithWall();
 

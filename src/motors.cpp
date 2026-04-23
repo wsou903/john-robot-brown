@@ -314,6 +314,161 @@ void drive_straight_poc()
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
+void drive_straight_poc_GV()
+{
+  int ir_enabled = 0 * ir_drive_toggle;
+  int gyro_enabled = 1;
+  int derivative_enabled = 1;
+  // lk its fine without the D term with just PI 120/3
+
+  // float last_print = millis();
+
+  bool wall_proximity = false;
+
+  // PID VALUES
+  // float kp_ir = 0.5*ir_enabled;
+  float kp_gyro = 120 * 5 * gyro_enabled; //float kp_gyro = 120 * gyro_enabled;
+
+  // float ki_ir = 0.001*ir_enabled;
+  float ki_gyro = 3 * gyro_enabled;
+
+  float kd_gyro = 5 * derivative_enabled;
+
+  //   // PID VALUES // OLD BEAUTIFUL 150 SPEED_VAL SPEEDS :) SORT OF OK
+  float kp_ir = 10 * ir_enabled;
+  // float kp_gyro = 120 * gyro_enabled;
+
+  float ki_ir = 0 * 0.001 * ir_enabled;
+  // float ki_gyro = 3 * gyro_enabled;
+
+  // float kd_gyro = 5 * derivative_enabled;
+
+  float err_ir;
+  float err_gyro;
+
+  float ir_u;
+  float gyro_u;
+
+  float gyro_read;
+  float avg_lr_read;
+
+  // sets the current wall distance to be the r(t)
+  // sets current gyro to become the reference angle
+  // ReadIRSensors();
+  float LR_right = getRightLR();
+  float LR_left = getLeftLR();
+
+  if (LR_right > LR_left)
+  {
+    avg_lr_read = LR_left;
+  }
+  else
+  {
+    avg_lr_read = LR_right;
+  }
+
+  float lr_initial = avg_lr_read;
+  // gyro_read = get_rotation_vector_yaw();
+  // float gyro_initial = gyro_read;
+
+  gyro_read = get_rotation_vector_yaw();                // GV GYRO LOGIC
+  float gyro_initial = gyro_read + inherited_angle;
+
+  float speed_val_reborn = 150;
+
+  // loop
+  while (!wall_proximity)
+  {
+    // budget_slam();
+
+    if (getRightSR() < 100 || getLeftSR() < 100)
+    {
+      wall_proximity = true;
+      stop();
+      break;
+    }
+    // if ((getRightSR()+getLeftSR())/2 < 85){
+    //   wall_proximity = true;
+    //   stop();
+    //   break;
+    // }
+
+    // if (getUSDistance() < 15) {
+    //   wall_proximity = true;
+    //   stop();
+    //   break;
+    // }
+
+    LR_right = getRightLR();
+    LR_left = getLeftLR();
+
+    if (LR_right > LR_left)
+    {
+      avg_lr_read = LR_left;
+    }
+    else
+    {
+      avg_lr_read = LR_right;
+    }
+
+    gyro_read = get_rotation_vector_yaw();
+
+    // Short range IR sensor outputs Right and Left
+    // float sr_right = pow((adcRaw3 / 31299.0), (1.0 / -1.067));
+    // float sr_left = pow((adcRaw4 / 1562610.0), (1.0 / -1.98778));
+
+    // error calcs
+    err_ir = lr_initial - avg_lr_read;
+    err_gyro = angle_diff(gyro_initial, gyro_read);
+
+    // // deadband for stopping the error if its too low // removing for now because idk if its needed
+    // if (abs(err_ir) < 1) err_ir = 0;
+    // if (abs(err_gyro) < 0.5) err_gyro = 0;
+
+    float d_err = err_gyro - prev_err_gyro;
+    prev_err_gyro = err_gyro;
+
+    // integral terms and windup prevention
+    integral_sum_ir += err_ir;
+    integral_sum_gyro += err_gyro;
+    integral_sum_ir = constrain(integral_sum_ir, -1000, 1000);
+    integral_sum_gyro = constrain(integral_sum_gyro, -1000, 1000);
+
+    // control effort calcs
+    ir_u = kp_ir * err_ir + ki_ir * integral_sum_ir;
+    gyro_u = kp_gyro * err_gyro + ki_gyro * integral_sum_gyro + kd_gyro * d_err;
+
+    // clamping?? idk
+
+    // left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
+    // left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
+    // right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
+    // right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
+
+    left_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
+    left_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
+    right_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
+    right_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
+
+    // DEBUGS
+    // if (millis() - last_print > 100) {
+    // BluetoothSerial.print("err_gyro: ");
+    // BluetoothSerial.println(err_gyro, 4);
+    // BluetoothSerial.println();
+    //   BluetoothSerial.print("gyro_u: ");
+    //   BluetoothSerial.println(gyro_u, 2);
+    //   BluetoothSerial.println();
+    //   last_print = millis();
+    // }
+
+    delay(10); // DELAY ///////////////
+  }
+
+  stop();
+  // BluetoothSerial.println("YAYAYAYAY drive finished");
+  function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
+}
+
 void drive_tothis_poc_GV(float distance)
 {
   // int ir_enabled = 0;
@@ -333,7 +488,7 @@ void drive_tothis_poc_GV(float distance)
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120 * gyro_enabled;
+  float kp_gyro = 120 * 5 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
   float ki_gyro = 3 * gyro_enabled;
