@@ -316,7 +316,7 @@ void drive_straight_poc()
 
 void drive_straight_poc_GV()
 {
-  int ir_enabled = 1;
+  int ir_enabled = 0;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
