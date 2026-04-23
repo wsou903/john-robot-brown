@@ -2,10 +2,10 @@
 #include "helpers.h"
 #include "sensors.h"
 
-const int pos_readings = 500; // 500 points at 100ms = 50 seconds of recording
-int history_X[pos_readings];
-int history_Y[pos_readings];
-int slam_point_count = 0;
+// const int pos_readings = 500; // 500 points at 100ms = 50 seconds of recording
+// int history_X[pos_readings];
+// int history_Y[pos_readings];
+// int slam_point_count = 0;
 
 // helper functions to set sensor limits
 float getValidSR(float raw)
@@ -130,61 +130,58 @@ void budget_slam()
     unsigned long now = millis();
 
     // get all sensors values
-    int us_front = 100 * getUSDistance();
-    int lr_left = 100 * getValidLR(getLeftLR());   // Assuming Left LR is on Left side
-    int lr_right = 100 * getValidLR(getRightLR()); // Assuming Right LR is on Right side
+    float us_front = getUSDistance();
+    float lr_left = getValidLR(getLeftLR());   // Assuming Left LR is on Left side
+    float lr_right = getValidLR(getRightLR()); // Assuming Right LR is on Right side
     float yaw = get_rotation_vector_yaw();
 
-    bool sensor_in_range = (getLeftLR() > getRightLR());
+    // bool sensor_in_range = (getLeftLR() > getRightLR());
 
-    if (direction && sensor_in_range)
-    {
-        robotY = robotY + lr_right;
-    }
-    else if (direction && !sensor_in_range)
-    {
-        robotY = robotY + lr_left;
-    }
-    else if (!direction && sensor_in_range)
-    {
-        robotY = robotY + lr_right;
-    }
-    else
-    {
-        robotY = robotY + lr_left;
-    }
-
-    // int sum_y = 0;
-    // int y_count = 0;
-
-    // 3. Calculate Y from Left Sensor (if valid)
-    // if (lr_left > 0)
+    // if (direction && sensor_in_range)
     // {
-    //     // We use cos(robot_heading) to correct for the robot being tilted
-    //     int y_estimate_left = 100 * (lr_left * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2);
-    //     sum_y += y_estimate_left;
-    //     y_count++;
+    //     robotY = robotY + lr_right;
+    // }
+    // else if (direction && !sensor_in_range)
+    // {
+    //     robotY = robotY + lr_left;
+    // }
+    // else if (!direction && sensor_in_range)
+    // {
+    //     robotY = robotY + lr_right;
+    // }
+    // else
+    // {
+    //     robotY = robotY + lr_left;
     // }
 
-    // // 4. Calculate Y from Right Sensor (if valid)
-    // if (lr_right > 0)
-    // {
-    //     // Distance from right wall subtracted from total width
-    //     float y_estimate_right = 100 * (TABLE_WIDTH - ((lr_right * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2)));
-    //     sum_y += y_estimate_right;
-    //     y_count++;
-    // }
+    int sum_y = 0;
+    int y_count = 0;
 
-    // // 5. Average the Y results
-    // if (y_count > 0)
-    // {
-    //     robotY = (sum_y / y_count) / 1000;
-    // }
+    // 3. Calculate Y from Left Sensor(if valid) if (lr_left > 0)
+    {
+        // We use cos(robot_heading) to correct for the robot being tilted
+        int y_estimate_left = (lr_left * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2);
+        sum_y += y_estimate_left;
+        y_count++;
+    }
 
-    robotX = us_front + 100 * (JOHN_ROBOT_WIDTH / 2);
+    // 4. Calculate Y from Right Sensor (if valid)
+    if (lr_right > 0)
+    {
+        // Distance from right wall subtracted from total width
+        float y_estimate_right = (TABLE_WIDTH - ((lr_right * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2)));
+        sum_y += y_estimate_right;
+        y_count++;
+    }
 
-    robotX = robotX / 100;
-    robotY = robotY / 100;
+    // 5. Average the Y results
+    if (y_count > 0)
+    {
+        robotY = (sum_y / y_count) / 1000;
+    }
+
+    robotX = us_front + ((JOHN_ROBOT_WIDTH / 10) / 2);
+
     static unsigned long print_timer = 0;
     if (now - print_timer > 200)
     {
@@ -205,23 +202,23 @@ void budget_slam()
 
 void dump_slam_data()
 {
-    BluetoothSerial.println("--- DUMP START ---");
-    delay(10);
-    BluetoothSerial.print("Total Points Recorded: ");
-    delay(10);
-    BluetoothSerial.println(slam_point_count);
-    delay(10);
-    BluetoothSerial.println("X, Y"); // CSV Header
-    delay(10);
-    for (int i = 0; i < slam_point_count; i++)
-    {
-        BluetoothSerial.print(history_X[i]);
-        delay(10);
-        BluetoothSerial.print(",");
-        delay(10);
-        BluetoothSerial.println(history_Y[i]);
-        delay(10);
-    }
+    // BluetoothSerial.println("--- DUMP START ---");
+    // delay(10);
+    // BluetoothSerial.print("Total Points Recorded: ");
+    // delay(10);
+    // BluetoothSerial.println(slam_point_count);
+    // delay(10);
+    // BluetoothSerial.println("X, Y"); // CSV Header
+    // delay(10);
+    // for (int i = 0; i < slam_point_count; i++)
+    // {
+    //     BluetoothSerial.print(history_X[i]);
+    //     delay(10);
+    //     BluetoothSerial.print(",");
+    //     delay(10);
+    //     BluetoothSerial.println(history_Y[i]);
+    //     delay(10);
+    // }
 
     BluetoothSerial.println("end");
 }
