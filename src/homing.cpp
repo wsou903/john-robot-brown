@@ -39,7 +39,7 @@ void G28()
   robotX=0;
   robotY=0;
   robot_heading=0;
-  robot_heading_global = 0.0;
+  robot_heading_global = get_rotation_vector_yaw(); // set the global heading to the current yaw after homing, so that all future readings are relative to this starting orientation
   // strafe_straight_poc(direction);
   // AlignWithWall();
   // if (getLeftLR() > 750){

@@ -202,7 +202,23 @@ void budget_slam()
     // }
     // 5. OUTPUT DATA
 
-    robot_heading_global = robot_heading_global + get_rotation_vector_yaw();
+    static float last_raw = 0;
+    static float continuous_yaw = 0;
+
+    float raw_yaw = get_rotation_vector_yaw();
+    float delta = raw_yaw - last_raw;
+
+    // Handle wrap
+    if (delta > PI) delta -= TWO_PI;
+    if (delta < -PI) delta += TWO_PI;
+
+    continuous_yaw += delta;
+    last_raw = raw_yaw;
+
+    // Then apply offset
+    robot_heading = continuous_yaw - robot_heading_global;
+
+    robot_heading = get_rotation_vector_yaw() - robot_heading_global;
 
     static unsigned long print_timer = 0;
     if (now - print_timer > 100)
@@ -217,7 +233,7 @@ void budget_slam()
 
         BluetoothSerial.print(",");
 
-        BluetoothSerial.println(robot_heading_global * 180.0 / PI); // Deg for easier reading
+        BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
         print_timer = now;
     }
 }
