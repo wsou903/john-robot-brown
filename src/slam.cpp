@@ -111,14 +111,19 @@ void budget_slam()
 void dump_slam_data()
 {
     BluetoothSerial.println("--- DUMP START ---");
+    delay(10);
     BluetoothSerial.print("Total Points Recorded: ");
+    delay(10);
     BluetoothSerial.println(slam_point_count);
+    delay(10);
     BluetoothSerial.println("X, Y"); // CSV Header
-
+    delay(10);
     for (int i = 0; i < slam_point_count; i++)
     {
         BluetoothSerial.print(history_X[i]);
+        delay(10);
         BluetoothSerial.print(",");
+        delay(10);
         BluetoothSerial.println(history_Y[i]);
         delay(10);
     }
