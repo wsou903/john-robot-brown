@@ -327,7 +327,7 @@ void drive_straight_poc_GV()
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120 * 5 * gyro_enabled; //float kp_gyro = 120 * gyro_enabled;
+  float kp_gyro = 120 * 1 * gyro_enabled; //float kp_gyro = 120 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
   float ki_gyro = 3 * gyro_enabled;
@@ -488,7 +488,7 @@ void drive_tothis_poc_GV(float distance)
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120 * 2.5 * gyro_enabled;
+  float kp_gyro = 120 * 1 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
   float ki_gyro = 3 * gyro_enabled;
