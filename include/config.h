@@ -32,7 +32,7 @@ const byte right_front = 47;
 
 // ------------- CONSTANTS
 // #define TURNING_SAMPLES 57
-#define JOHN_ROBOT_WIDTH 210 // mm
+#define JOHN_ROBOT_WIDTH 210  // mm
 #define JOHN_ROBOT_LENGTH 210 // mm
 #define WHEEL_RADIUS 2.75
 #define HALF_LR_WHEEL_TO_WHEEL 9.5
@@ -40,7 +40,7 @@ const byte right_front = 47;
 #define FB_WHEEL_TO_WHEEL 16
 // #define US_OFFSET_SIDE 10 // 10cm from center to left side
 // #define US_OFFSET_FRONT 2 // 2cm from center to front
-#define TABLE_WIDTH 1215.0 // mm 
+#define TABLE_WIDTH 1215.0  // mm
 #define TABLE_LENGTH 1980.0 // mm
 #define SR_SPACING 55.0
 #define LR_TO_CENTER 6.5
@@ -58,6 +58,8 @@ enum STATE
 // ------------ GLOBAL OBJECTS
 
 extern SoftwareSerial BluetoothSerial;
+// Serial Pointer
+extern SoftwareSerial *SerialCom;
 extern Adafruit_BNO08x bno08x;
 extern sh2_SensorValue_t sensorValue;
 
