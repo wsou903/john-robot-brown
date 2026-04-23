@@ -206,11 +206,11 @@ void drive_straight_poc()
 
   if (LR_right > LR_left)
   {
-    avg_lr_read = LR_right;
+    avg_lr_read = LR_left;
   }
   else
   {
-    avg_lr_read = LR_left;
+    avg_lr_read = LR_right;
   }
 
   float lr_initial = avg_lr_read;
@@ -248,11 +248,11 @@ void drive_straight_poc()
 
     if (LR_right > LR_left)
     {
-      avg_lr_read = LR_right;
+      avg_lr_read = LR_left;
     }
     else
     {
-      avg_lr_read = LR_left;
+      avg_lr_read = LR_right;
     }
 
     gyro_read = get_rotation_vector_yaw();
