@@ -125,7 +125,7 @@ STATE running()
 
     farming();
 
-    dump_slam_data();
+    // dump_slam_data();
     delay(30000);
 
 #ifndef NO_BATTERY_V_OK

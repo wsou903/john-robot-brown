@@ -224,7 +224,7 @@ void drive_straight_poc()
   // loop
   while (!wall_proximity)
   {
-    // budget_slam();
+    budget_slam();
 
     if (getRightSR() < 100 || getLeftSR() < 100)
     {
@@ -316,7 +316,7 @@ void drive_straight_poc()
 
 void drive_straight_poc_GV()
 {
-  int ir_enabled = 1;
+  int ir_enabled = 0;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
@@ -327,7 +327,7 @@ void drive_straight_poc_GV()
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120 * 5 * gyro_enabled; //float kp_gyro = 120 * gyro_enabled;
+  float kp_gyro = 120 * 1 * gyro_enabled; //float kp_gyro = 120 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
   float ki_gyro = 3 * gyro_enabled;
@@ -379,7 +379,7 @@ void drive_straight_poc_GV()
   // loop
   while (!wall_proximity)
   {
-    // budget_slam();
+    budget_slam();
 
     if (getRightSR() < 100 || getLeftSR() < 100)
     {
@@ -488,7 +488,7 @@ void drive_tothis_poc_GV(float distance)
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120 * 5 * gyro_enabled;
+  float kp_gyro = 120 * 1 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
   float ki_gyro = 3 * gyro_enabled;
@@ -518,7 +518,7 @@ void drive_tothis_poc_GV(float distance)
   // loop
   while (!wall_proximity)
   {
-    // budget_slam();
+    budget_slam();
 
     if (fabs(getUSDistance() - target_US_distance) < 1)
     {
@@ -642,7 +642,7 @@ void drive_tothis_poc(float distance)
   // loop
   while (!wall_proximity)
   {
-    // budget_slam();
+    budget_slam();
 
     if (fabs(getUSDistance() - target_US_distance) < 0.5)
     {
@@ -769,6 +769,7 @@ void strafe_straight_poc(int input)
   // loop
   while (!wall_proximity)
   {
+    budget_slam();
     if (direction == 1)
     {
       if (getRightLR() < 150)
@@ -863,7 +864,7 @@ void strafe_straight_poc(int input)
   }
 
   stop();
-  BluetoothSerial.println("YAYAYAYAY");
+  // BluetoothSerial.println("YAYAYAYAY");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
@@ -939,7 +940,7 @@ void strafe_thismuch_poc(int direction, float distance)
   // loop
   while (!wall_proximity && (millis() - fuck < 1000))
   {
-    // budget_slam();
+    budget_slam();
 
     if (sensor_in_range)
     {
@@ -1085,7 +1086,7 @@ void turn_n_degrees(int deg)
       else if (millis() - settle_start_time >= required_settle_time)
       {
         // Remained in the target zone long enough, success!
-        BluetoothSerial.println("Target reached and settled.");
+        // BluetoothSerial.println("Target reached and settled.");
         break;
       }
     }

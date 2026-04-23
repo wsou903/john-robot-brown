@@ -7,6 +7,8 @@
 // int history_Y[pos_readings];
 // int slam_point_count = 0;
 
+int direction = 0;
+
 // helper functions to set sensor limits
 float getValidSR(float raw)
 {
