@@ -22,7 +22,7 @@ void farming()
 
     // 2. Define Thresholds
     const float LANE_WIDTH = 100.0;     // mm to strafe for each lane
-    const float REAR_WALL_TARGET = 155; // mm target for US sensor when driving backwards (course is 1991mm long)
+    const float REAR_WALL_TARGET = 160; // mm target for US sensor when driving backwards (course is 1991mm long)
     const float FWD_WALL_TARGET = 10;
     // const float STARTING_US_DIST = getUSDistance();
     // delay(100);
@@ -42,21 +42,21 @@ void farming()
         if (driving_forward)
         {
             // BluetoothSerial.println("Farming: Driving Forward...");
-            delay(50);
+            delay(75);
             drive_straight_poc(); // Drives until SR sensors < 100mm
             // drive_tothis_poc(FWD_WALL_TARGET);
             // AlignWithWall();
 
-            // forward_counter++;
-            // if (forward_counter % 4 == 0)
-            // {
-            //     AlignWithWall();
-            // }
+            forward_counter++;
+            if (forward_counter % 4 == 0)
+            {
+                AlignWithWall();
+            }
         }
         else
         {
             // BluetoothSerial.println("Farming: Driving Backwards...");
-            delay(50);
+            delay(75);
             Align_calc(align_calc_output); // this needs to be put oput
             inherited_angle = align_calc_output[1];
             drive_tothis_poc_GV(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
@@ -66,7 +66,7 @@ void farming()
             // BluetoothSerial.println(getUSDistance() - STARTING_US_DIST);
         }
 
-        delay(50); // Allow momentum to settle
+        delay(75); // Allow momentum to settle
 
         // --- 2. CHECK IF WE REACHED THE END OF THE COURSE ---
         // Look at the LR sensor in the direction we are strafing.
