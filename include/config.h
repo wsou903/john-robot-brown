@@ -59,7 +59,7 @@ enum STATE
 
 extern SoftwareSerial BluetoothSerial;
 // Serial Pointer
-extern SoftwareSerial *SerialCom;
+extern HardwareSerial *SerialCom;
 extern Adafruit_BNO08x bno08x;
 extern sh2_SensorValue_t sensorValue;
 
