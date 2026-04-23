@@ -517,7 +517,7 @@ void strafe_straight_poc(int direction){
 }
 
 
-void strafe_thismuch_poc(int direction, float distance){
+void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is left
 
   int us_enabled = 1;
   int gyro_enabled = 1;
@@ -529,35 +529,49 @@ void strafe_thismuch_poc(int direction, float distance){
   bool wall_proximity = false;
 
   bool sensor_in_range = (getLeftLR() > getRightLR()); //true if right sensor is in range, false if left sensor
-
-  float target_sensor_distance = 0;
-  if (direction && sensor_in_range){
-    target_sensor_distance = getRightLR() - distance;
-  } else if (direction && !sensor_in_range){
-    target_sensor_distance = getLeftLR() + distance;
-  } else if (!direction && sensor_in_range){
-    target_sensor_distance = getRightLR() + distance;
-  } else {
-    target_sensor_distance = getLeftLR() - distance;
-  }
-  BluetoothSerial.print("target dist: ");
-      BluetoothSerial.println(target_sensor_distance, 4);
-  // PID VALUES
+    // PID VALUES
   float kp_gyro = 300*gyro_enabled;
-  float kp_us = 15*us_enabled;
-
   float ki_gyro = 3*gyro_enabled;
-  float ki_us = 0.01*us_enabled;
-
   float kd_gyro = 5*derivative_enabled;
 
+  float kp_us = 50*us_enabled;
+  float ki_us = 0.01*us_enabled;
+
   float err_gyro, err_us, ir_u ,gyro_u,us_u,gyro_read,us_read;
+
+  float target_sensor_distance = 0;
+  float start_dist = 0;
+  // if (direction && sensor_in_range){
+  //   target_sensor_distance = getRightLR() - distance;
+  // } else if (direction && !sensor_in_range){
+  //   target_sensor_distance = getLeftLR() + distance;
+  // } else if (!direction && sensor_in_range){
+  //   target_sensor_distance = getRightLR() + distance;
+  // } else {
+  //   target_sensor_distance = getLeftLR() - distance;
+  // }
+    if (direction && sensor_in_range){
+    start_dist = getRightLR();
+    target_sensor_distance = start_dist - distance;
+  } else if (direction && !sensor_in_range){
+    start_dist = getLeftLR();
+    target_sensor_distance = start_dist + distance;
+  } else if (!direction && sensor_in_range){
+    start_dist = getRightLR();
+    target_sensor_distance = start_dist + distance;
+  } else {
+    start_dist = getLeftLR();
+    target_sensor_distance = start_dist - distance;
+  }
+
+
 
   // sets the current wall distance to be the r(t)
   // sets current gyro to become the reference angle
   gyro_read = get_rotation_vector_yaw();
   us_read = getUSDistance();
   float us_initial = us_read, gyro_initial = gyro_read;
+  delay(100);
 
   // loop
   while (!wall_proximity){
@@ -577,10 +591,8 @@ void strafe_thismuch_poc(int direction, float distance){
     }
 
     gyro_read = get_rotation_vector_yaw();
-
-    float sr_right = getRightSR();
-    float sr_left = getLeftSR();
-
+    // float lr_right = getRightLR()*10;
+    // float lr_left = getLeftLR()*10;
     us_read = getUSDistance();
 
 
@@ -630,13 +642,18 @@ void strafe_thismuch_poc(int direction, float distance){
 
     // DEBUGS 
     if (millis() - last_print > 100) {
-      BluetoothSerial.print("target: ");
-      BluetoothSerial.println(target, 4);
-      BluetoothSerial.println();
-      // delay(10);
-      // BluetoothSerial.print("gyrou: ");
-      // BluetoothSerial.println(gyro_u, 2);
+      // BluetoothSerial.print("target: ");
+      // BluetoothSerial.println(target_sensor_distance, 4);
       // BluetoothSerial.println();
+      delay(10);
+      BluetoothSerial.print("current: ");
+      if(sensor_in_range){
+        BluetoothSerial.println(getRightLR() - target_sensor_distance);
+      } else {
+      BluetoothSerial.println(getLeftLR() - target_sensor_distance);
+      }
+      delay(10);
+      BluetoothSerial.println();
       last_print = millis();
     }
 

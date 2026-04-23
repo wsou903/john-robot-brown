@@ -52,6 +52,10 @@ float getLeftLR() { // outputs in fucking cm WTF
 
   float voltage = adcRaw * (5.0 / 1023.0);
   float lastLeftLR = pow((voltage / 17.6), -1.144);
+  lastLeftLR = lastLeftLR*10; // output mm?
+  if (lastLeftLR > 800){
+    lastLeftLR = 800;
+  }
   // lastLeftLR = kfSR_L.updateEstimate(lastLeftLR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
   return lastLeftLR;
 }
@@ -62,6 +66,10 @@ float getRightLR() {
 
   float voltage = adcRaw * (5.0 / 1023.0);
   float lastRightLR = pow((voltage / 16.038), -1.210);
+  lastRightLR = lastRightLR * 10;
+  if (lastRightLR > 800){
+    lastRightLR = 800;
+  }
   // lastRightLR = kfSR_L.updateEstimate(lastRightLR); // IF KALMAN NOT CORRECTLY WORKING (DESPITE TESTING SHOWING IT WORKS) JUST REMOVE THIS LINE
 
   return lastRightLR;
@@ -174,14 +182,14 @@ void TestIRSensors() {
   static unsigned long timer = millis();
 
   while (true) {
-    if ((millis() - timer) > 100) {
-      BluetoothSerial.print("SR1:");
-      BluetoothSerial.println(getRightSR());
-      delay(50);
+    if ((millis() - timer) > 1000) {
+      BluetoothSerial.print("right lr:");
+      BluetoothSerial.println(getRightLR());
+      delay(500);
       BluetoothSerial.print(",");
-      BluetoothSerial.print("SR2:");
-      BluetoothSerial.println(getLeftSR());
-      delay(50);
+      BluetoothSerial.print("left lr:");
+      BluetoothSerial.println(getLeftLR());
+      delay(500);
       // Serial.print("LR1:");
       // Serial.print(getLeftLR());
       // Serial.print(",");
