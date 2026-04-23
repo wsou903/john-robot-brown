@@ -48,7 +48,7 @@ void farming()
             // AlignWithWall();
 
             forward_counter++;
-            if (forward_counter % 2 == 0)
+            if (forward_counter % 1 == 0)
             {
                 AlignWithWall();
             }
@@ -57,10 +57,10 @@ void farming()
         {
             // BluetoothSerial.println("Farming: Driving Backwards...");
             delay(75);
-            // Align_calc(align_calc_output); // this needs to be put oput
-            // inherited_angle = align_calc_output[1];
-            // drive_tothis_poc_GV(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
-            drive_tothis_poc(-REAR_WALL_TARGET);
+            Align_calc(align_calc_output); // this needs to be put oput
+            inherited_angle = align_calc_output[1];
+            drive_tothis_poc_GV(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
+            // drive_tothis_poc(-REAR_WALL_TARGET);
             // drive_tothis_poc(getUSDistance() - STARTING_US_DIST); // Drives backward until US sensor reads (1980 - (210+10))mm
             // BluetoothSerial.print("Driving backwards:");
             // BluetoothSerial.println(getUSDistance() - STARTING_US_DIST);
