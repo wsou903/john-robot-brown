@@ -120,6 +120,7 @@ void dump_slam_data()
         BluetoothSerial.print(history_X[i]);
         BluetoothSerial.print(",");
         BluetoothSerial.println(history_Y[i]);
+        delay(10);
     }
 
     BluetoothSerial.println("end");
