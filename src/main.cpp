@@ -64,6 +64,10 @@ void setup()
 void loop()
 {
   static STATE machine_state = INITIALISING;
+  if (machine_state == RUNNING)
+  {
+    budget_slam();
+  }
   // Finite-state machine Code
   switch (machine_state)
   {
@@ -121,7 +125,7 @@ STATE running()
   if (millis() - previous_millis > 500)
   { // Arduino style 500ms timed execution statement
     previous_millis = millis();
-   
+
     // delay(30000);
     // budget_slam();
     // TestIRSensors();
@@ -130,12 +134,9 @@ STATE running()
 
     farming();
     BluetoothSerial.println("course completion");
-    delay(5000);
+    dump_slam_data();
+    delay(30000);
 
-    // while(1) {
-    //   BluetoothSerial.println(getUSDistance());
-    //   delay(30);
-    // }
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
       return STOPPED;

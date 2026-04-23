@@ -2,12 +2,11 @@
 #include "helpers.h"
 #include "sensors.h"
 
-// --- SLAM DATA STORAGE ---
-const int MAX_SLAM_POINTS = 500; // 500 points at 100ms = 50 seconds of recording. Adjust as needed!
-float history_X[MAX_SLAM_POINTS];
-float history_Y[MAX_SLAM_POINTS];
-// float history_Heading[MAX_SLAM_POINTS];
+const int pos_readings = 500; // 500 points at 100ms = 50 seconds of recording
+float history_X[pos_readings];
+float history_Y[pos_readings];
 int slam_point_count = 0;
+
 // helper functions to set sensor limits
 float getValidSR(float raw)
 {
@@ -23,7 +22,7 @@ void budget_slam()
 {
     unsigned long now = millis();
 
-    // 1. GET ALL CURRENT READINGS (No waiting for servos!)
+    // get all sensors values
     float us_front = getUSDistance();
     float sr_front_left = getValidSR(getLeftSR());
     float sr_front_right = getValidSR(getRightSR());
@@ -35,7 +34,7 @@ void budget_slam()
     float sum_x = 0;
     float sum_y = 0;
 
-    // 2. COORDINATE CALCULATION LAMBDA
+    // get coord estimate using lambda func
     auto addCoordinateEstimate = [&](float distance, float mounted_angle)
     {
         if (distance <= 0)
@@ -57,7 +56,7 @@ void budget_slam()
         if (abs(c) > 0.707) // Within 45 degrees of X axis
         {
             if (c > 0)
-                sum_x += TABLE_HEIGHT - (distance * abs(c));
+                sum_x += TABLE_LENGTH - (distance * abs(c));
             else
                 sum_x += (distance * abs(c));
             x_count++;
@@ -74,7 +73,7 @@ void budget_slam()
         }
     };
 
-    // 3. MAP SENSORS TO ANGLES
+    // map angles
     // Front sensors (angle 0)
     addCoordinateEstimate(us_front, 0.0);
     addCoordinateEstimate(sr_front_left, 0.0);
@@ -84,18 +83,17 @@ void budget_slam()
     addCoordinateEstimate(lr_left, HALF_PI);   // 90 degrees
     addCoordinateEstimate(lr_right, -HALF_PI); // -90 degrees
 
-    // 4. AVERAGE THE RESULTS
+    // average the results
     if (x_count > 0)
         robotX = sum_x / x_count;
     if (y_count > 0)
         robotY = sum_y / y_count;
 
-    // 5. SAVE DATA TO ARRAYS (Rate limited to ~10Hz)
+    // save data to arrays (10Hz)
     static unsigned long save_timer = 0;
     if (now - save_timer > 100)
     {
-        // Only save if we haven't hit the memory limit
-        if (slam_point_count < MAX_SLAM_POINTS)
+        if (slam_point_count < pos_readings)
         {
             history_X[slam_point_count] = robotX;
             history_Y[slam_point_count] = robotY;
@@ -103,8 +101,8 @@ void budget_slam()
         }
         else
         {
-            // Optional: Warn if array is full
-            // BluetoothSerial.println("WARNING: SLAM Data Array Full!");
+
+            // BluetoothSerial.println("slam full");
         }
         save_timer = now;
     }
@@ -112,8 +110,8 @@ void budget_slam()
 
 void dump_slam_data()
 {
-    BluetoothSerial.println("--- BEGIN SLAM DATA DUMP ---");
-    BluetoothSerial.println("X, Y, Heading"); // CSV Header
+
+    BluetoothSerial.println("X, Y"); // CSV Header
 
     for (int i = 0; i < slam_point_count; i++)
     {
@@ -122,7 +120,7 @@ void dump_slam_data()
         BluetoothSerial.print(history_Y[i]);
     }
 
-    BluetoothSerial.println("--- END SLAM DATA DUMP ---");
+    BluetoothSerial.println("end");
 
     // Optional: Reset the count if you plan to run the robot again without resetting power
     // slam_point_count = 0;

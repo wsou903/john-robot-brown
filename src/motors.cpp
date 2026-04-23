@@ -3,6 +3,7 @@
 #include "motors.h"
 #include "helpers.h"
 #include "sensors.h"
+#include "slam.h"
 
 // Code Starts ----------------------------------------------------------------------------------------------------
 int n = 4;
@@ -73,6 +74,7 @@ void forward()
 
 void ccw()
 {
+  budget_slam();
   left_font_motor.writeMicroseconds(1500 - speed_val);
   left_rear_motor.writeMicroseconds(1500 - speed_val);
   right_rear_motor.writeMicroseconds(1500 - speed_val);
@@ -133,7 +135,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
   ang_vel[3] = (vel_x + vel_y - ik_constant) / WHEEL_RADIUS; // br
 
   float max = 0.0;
-  for (int i = 0; i < n; i++) 
+  for (int i = 0; i < n; i++)
   {
     float current_abs = fabs(ang_vel[i]);
     if (current_abs > max)
@@ -171,12 +173,12 @@ void drive_straight_poc()
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120*gyro_enabled;
+  float kp_gyro = 120 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
-  float ki_gyro = 3*gyro_enabled;
+  float ki_gyro = 3 * gyro_enabled;
 
-  float kd_gyro = 5*derivative_enabled;
+  float kd_gyro = 5 * derivative_enabled;
 
   // float err_ir;
   float err_gyro;
@@ -196,9 +198,12 @@ void drive_straight_poc()
   float gyro_initial = gyro_read;
 
   // loop
-  while (!wall_proximity){
+  while (!wall_proximity)
+  {
+    budget_slam();
 
-    if (getRightSR() <  100 || getLeftSR() < 100) {
+    if (getRightSR() < 100 || getLeftSR() < 100)
+    {
       wall_proximity = true;
       stop();
       break;
@@ -208,7 +213,7 @@ void drive_straight_poc()
     //   stop();
     //   break;
     // }
-    
+
     // if (getUSDistance() < 15) {
     //   wall_proximity = true;
     //   stop();
@@ -225,8 +230,7 @@ void drive_straight_poc()
     // err_ir = lr_initial - avg_lr_read;
     err_gyro = angle_diff(gyro_initial, gyro_read);
 
-
-    // // deadband for stopping the error if its too low // removing for now because idk if its needed 
+    // // deadband for stopping the error if its too low // removing for now because idk if its needed
     // if (abs(err_ir) < 1) err_ir = 0;
     // if (abs(err_gyro) < 0.5) err_gyro = 0;
 
@@ -234,11 +238,10 @@ void drive_straight_poc()
     prev_err_gyro = err_gyro;
 
     // integral terms and windup prevention
-    // integral_sum_ir += err_ir; 
+    // integral_sum_ir += err_ir;
     integral_sum_gyro += err_gyro;
     // integral_sum_ir = constrain(integral_sum_ir, -1000, 1000);
     integral_sum_gyro = constrain(integral_sum_gyro, -1000, 1000);
-  
 
     // control effort calcs
     // ir_u = kp_ir *  err_ir + ki_ir * integral_sum_ir;
@@ -256,21 +259,20 @@ void drive_straight_poc()
     right_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
     right_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
 
-    // DEBUGS 
+    // DEBUGS
     // if (millis() - last_print > 100) {
-      // BluetoothSerial.print("err_gyro: ");
-      // BluetoothSerial.println(err_gyro, 4);
-      // BluetoothSerial.println();
+    // BluetoothSerial.print("err_gyro: ");
+    // BluetoothSerial.println(err_gyro, 4);
+    // BluetoothSerial.println();
     //   BluetoothSerial.print("gyro_u: ");
     //   BluetoothSerial.println(gyro_u, 2);
     //   BluetoothSerial.println();
     //   last_print = millis();
     // }
 
-
     delay(10); // DELAY ///////////////
   }
-        
+
   stop();
   // BluetoothSerial.println("YAYAYAYAY drive finished");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
@@ -295,12 +297,12 @@ void drive_tothis_poc(float distance)
 
   // PID VALUES
   // float kp_ir = 0.5*ir_enabled;
-  float kp_gyro = 120*gyro_enabled;
+  float kp_gyro = 120 * gyro_enabled;
 
   // float ki_ir = 0.001*ir_enabled;
-  float ki_gyro = 3*gyro_enabled;
+  float ki_gyro = 3 * gyro_enabled;
 
-  float kd_gyro = 5*derivative_enabled;
+  float kd_gyro = 5 * derivative_enabled;
 
   // float err_ir;
   float err_gyro;
@@ -323,14 +325,17 @@ void drive_tothis_poc(float distance)
   unsigned long last_print = millis();
 
   // loop
-  while (!wall_proximity){
+  while (!wall_proximity)
+  {
+    budget_slam();
 
-    if (fabs(getUSDistance() - target_US_distance) < 0.5) {
+    if (fabs(getUSDistance() - target_US_distance) < 0.5)
+    {
       wall_proximity = true;
       stop();
       break;
     }
-    
+
     // avg_lr_read = (distLR1 + distLR2) / 2.0;
     gyro_read = get_rotation_vector_yaw();
 
@@ -342,8 +347,7 @@ void drive_tothis_poc(float distance)
     // err_ir = lr_initial - avg_lr_read;
     err_gyro = angle_diff(gyro_initial, gyro_read);
 
-
-    // // deadband for stopping the error if its too low // removing for now because idk if its needed 
+    // // deadband for stopping the error if its too low // removing for now because idk if its needed
     // if (abs(err_ir) < 1) err_ir = 0;
     // if (abs(err_gyro) < 0.5) err_gyro = 0;
 
@@ -351,11 +355,10 @@ void drive_tothis_poc(float distance)
     prev_err_gyro = err_gyro;
 
     // integral terms and windup prevention
-    // integral_sum_ir += err_ir; 
+    // integral_sum_ir += err_ir;
     integral_sum_gyro += err_gyro;
     // integral_sum_ir = constrain(integral_sum_ir, -1000, 1000);
     integral_sum_gyro = constrain(integral_sum_gyro, -1000, 1000);
-  
 
     // control effort calcs
     // ir_u = kp_ir *  err_ir + ki_ir * integral_sum_ir;
@@ -363,41 +366,44 @@ void drive_tothis_poc(float distance)
 
     // clamping?? idk
     bool forward = true;
-    if (getUSDistance() < target_US_distance) {
+    if (getUSDistance() < target_US_distance)
+    {
       forward = false;
     }
 
-    if(forward){
+    if (forward)
+    {
       left_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
       left_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
       right_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
       right_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
-    } else {
+    }
+    else
+    {
       left_font_motor.writeMicroseconds(1500 - speed_val - ir_u - gyro_u);
       left_rear_motor.writeMicroseconds(1500 - speed_val + ir_u - gyro_u);
       right_rear_motor.writeMicroseconds(1500 + speed_val + ir_u - gyro_u);
       right_font_motor.writeMicroseconds(1500 + speed_val - ir_u - gyro_u);
     }
 
-
-    // DEBUGS 
-    if (millis() - last_print > 200) {
+    // DEBUGS
+    if (millis() - last_print > 200)
+    {
       BluetoothSerial.print("err_us:");
       BluetoothSerial.println(current_US);
       last_print = millis();
     }
 
-
     delay(10); // DELAY ///////////////
   }
-        
+
   stop();
   // BluetoothSerial.println("YAYAYAYAY drive finished");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
-
-void strafe_straight_poc(int direction){
+void strafe_straight_poc(int direction)
+{
 
   int us_enabled = 1;
   int gyro_enabled = 1;
@@ -409,13 +415,13 @@ void strafe_straight_poc(int direction){
   bool wall_proximity = false;
 
   // PID VALUES
-  float kp_gyro = 120*5*gyro_enabled;
-  float kp_us = 15*us_enabled;
+  float kp_gyro = 120 * 5 * gyro_enabled;
+  float kp_us = 15 * us_enabled;
 
-  float ki_gyro = 3*gyro_enabled;
-  float ki_us = 0.01*us_enabled;
+  float ki_gyro = 3 * gyro_enabled;
+  float ki_us = 0.01 * us_enabled;
 
-  float kd_gyro = 5*derivative_enabled;
+  float kd_gyro = 5 * derivative_enabled;
 
   float err_gyro;
   float err_us;
@@ -435,9 +441,12 @@ void strafe_straight_poc(int direction){
   float us_initial = us_read;
 
   // loop
-  while (!wall_proximity){
-    if(direction == 1){
-      if (getRightLR()  < 150){
+  while (!wall_proximity)
+  {
+    if (direction == 1)
+    {
+      if (getRightLR() < 150)
+      {
         wall_proximity = true;
         stop();
         break;
@@ -451,12 +460,11 @@ void strafe_straight_poc(int direction){
 
     us_read = getUSDistance();
 
-
     // error calcs
     err_gyro = angle_diff(gyro_initial, gyro_read);
     err_us = us_initial - us_read;
 
-    // // deadband for stopping the error if its too low // removing for now because idk if its needed 
+    // // deadband for stopping the error if its too low // removing for now because idk if its needed
     // if (abs(err_ir) < 1) err_ir = 0;
     // if (abs(err_gyro) < 0.5) err_gyro = 0;
 
@@ -477,26 +485,28 @@ void strafe_straight_poc(int direction){
     // // clamping?? idk
     // gyro_u = constrain(gyro_u, -80, 80);
 
-    // get if right or left 
+    // get if right or left
 
-    if (direction == 1){
+    if (direction == 1)
+    {
       // strafe right
-      left_font_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
-      left_rear_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
-      right_font_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
-      right_rear_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
-    } else {
+      left_font_motor.writeMicroseconds(1500 + speed_val - gyro_u - us_u);
+      left_rear_motor.writeMicroseconds(1500 - speed_val - gyro_u - us_u);
+      right_font_motor.writeMicroseconds(1500 - speed_val - gyro_u + us_u);
+      right_rear_motor.writeMicroseconds(1500 + speed_val - gyro_u + us_u);
+    }
+    else
+    {
       // strafe left
-      left_font_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
-      left_rear_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
-      right_font_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
-      right_rear_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
+      left_font_motor.writeMicroseconds(1500 - speed_val - gyro_u - us_u);
+      left_rear_motor.writeMicroseconds(1500 + speed_val - gyro_u - us_u);
+      right_font_motor.writeMicroseconds(1500 + speed_val - gyro_u + us_u);
+      right_rear_motor.writeMicroseconds(1500 - speed_val - gyro_u + us_u);
     }
 
-
-
-    // DEBUGS 
-    if (millis() - last_print > 100) {
+    // DEBUGS
+    if (millis() - last_print > 100)
+    {
       // BluetoothSerial.print("err_gyro: ");
       // BluetoothSerial.println(err_gyro, 4);
       // BluetoothSerial.println();
@@ -506,17 +516,16 @@ void strafe_straight_poc(int direction){
       last_print = millis();
     }
 
-
     delay(10); // DELAY ///////////////
   }
-        
+
   stop();
   BluetoothSerial.println("YAYAYAYAY");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
-
-void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is left
+void strafe_thismuch_poc(int direction, float distance)
+{ // 1 is right, 0 is left
 
   int us_enabled = 1;
   int gyro_enabled = 1;
@@ -527,16 +536,16 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
 
   bool wall_proximity = false;
 
-  bool sensor_in_range = (getLeftLR() > getRightLR()); //true if right sensor is in range, false if left sensor
-    // PID VALUES
-  float kp_gyro = 300*gyro_enabled;
-  float ki_gyro =1*gyro_enabled;
-  float kd_gyro = 0.001*derivative_enabled;
+  bool sensor_in_range = (getLeftLR() > getRightLR()); // true if right sensor is in range, false if left sensor
+                                                       //  PID VALUES
+  float kp_gyro = 300 * gyro_enabled;
+  float ki_gyro = 1 * gyro_enabled;
+  float kd_gyro = 0.001 * derivative_enabled;
 
-  float kp_us = 50*us_enabled;
-  float ki_us = 0.1*us_enabled;
+  float kp_us = 50 * us_enabled;
+  float ki_us = 0.1 * us_enabled;
 
-  float err_gyro, err_us, ir_u ,gyro_u,us_u,gyro_read,us_read;
+  float err_gyro, err_us, ir_u, gyro_u, us_u, gyro_read, us_read;
 
   float target_sensor_distance = 0;
   float start_dist = 0;
@@ -549,21 +558,26 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
   // } else {
   //   target_sensor_distance = getLeftLR() - distance;
   // }
-    if (direction && sensor_in_range){
+  if (direction && sensor_in_range)
+  {
     start_dist = getRightLR();
     target_sensor_distance = start_dist - distance;
-  } else if (direction && !sensor_in_range){
+  }
+  else if (direction && !sensor_in_range)
+  {
     start_dist = getLeftLR();
     target_sensor_distance = start_dist + distance;
-  } else if (!direction && sensor_in_range){
+  }
+  else if (!direction && sensor_in_range)
+  {
     start_dist = getRightLR();
     target_sensor_distance = start_dist + distance;
-  } else {
+  }
+  else
+  {
     start_dist = getLeftLR();
     target_sensor_distance = start_dist - distance;
   }
-
-
 
   // sets the current wall distance to be the r(t)
   // sets current gyro to become the reference angle
@@ -573,16 +587,23 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
   // delay(100);
 
   // loop
-  while (!wall_proximity && (millis() - fuck < 1000)){
+  while (!wall_proximity && (millis() - fuck < 1000))
+  {
+    budget_slam();
 
-    if(sensor_in_range){
-      if(fabs(getRightLR() - target_sensor_distance) < 2){
+    if (sensor_in_range)
+    {
+      if (fabs(getRightLR() - target_sensor_distance) < 2)
+      {
         wall_proximity = true;
         stop();
         break;
       }
-    } else {
-      if(fabs(getLeftLR() - target_sensor_distance) < 2){
+    }
+    else
+    {
+      if (fabs(getLeftLR() - target_sensor_distance) < 2)
+      {
         wall_proximity = true;
         stop();
         break;
@@ -594,13 +615,11 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
     // float lr_left = getLeftLR()*10;
     us_read = getUSDistance();
 
-
-
     // error calcs
     err_gyro = angle_diff(gyro_initial, gyro_read);
     err_us = us_initial - us_read;
 
-    // // deadband for stopping the error if its too low // removing for now because idk if its needed 
+    // // deadband for stopping the error if its too low // removing for now because idk if its needed
     // if (abs(err_ir) < 1) err_ir = 0;
     // if (abs(err_gyro) < 0.5) err_gyro = 0;
 
@@ -621,45 +640,49 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
     // // clamping?? idk
     // gyro_u = constrain(gyro_u, -80, 80);
 
-    // get if right or left 
+    // get if right or left
 
-    if (direction == 1){
+    if (direction == 1)
+    {
       // strafe right
-      left_font_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
-      left_rear_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
-      right_font_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
-      right_rear_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
-    } else {
+      left_font_motor.writeMicroseconds(1500 + speed_val - gyro_u - us_u);
+      left_rear_motor.writeMicroseconds(1500 - speed_val - gyro_u - us_u);
+      right_font_motor.writeMicroseconds(1500 - speed_val - gyro_u + us_u);
+      right_rear_motor.writeMicroseconds(1500 + speed_val - gyro_u + us_u);
+    }
+    else
+    {
       // strafe left
-      left_font_motor.writeMicroseconds(  1500 - speed_val - gyro_u  - us_u);
-      left_rear_motor.writeMicroseconds(  1500 + speed_val - gyro_u  - us_u);
-      right_font_motor.writeMicroseconds( 1500 + speed_val - gyro_u  + us_u);
-      right_rear_motor.writeMicroseconds( 1500 - speed_val - gyro_u  + us_u);
+      left_font_motor.writeMicroseconds(1500 - speed_val - gyro_u - us_u);
+      left_rear_motor.writeMicroseconds(1500 + speed_val - gyro_u - us_u);
+      right_font_motor.writeMicroseconds(1500 + speed_val - gyro_u + us_u);
+      right_rear_motor.writeMicroseconds(1500 - speed_val - gyro_u + us_u);
     }
 
-
-
-    // DEBUGS 
-    if (millis() - last_print > 200) {
+    // DEBUGS
+    if (millis() - last_print > 200)
+    {
       BluetoothSerial.print("t: ");
       BluetoothSerial.println(target_sensor_distance, 3);
       BluetoothSerial.println();
-      
+
       // delay(10);
       BluetoothSerial.print("c: ");
-      if(sensor_in_range){
+      if (sensor_in_range)
+      {
         BluetoothSerial.println(getRightLR() - target_sensor_distance);
-      } else {
-      BluetoothSerial.println(getLeftLR() - target_sensor_distance);
+      }
+      else
+      {
+        BluetoothSerial.println(getLeftLR() - target_sensor_distance);
       }
       BluetoothSerial.println();
       last_print = millis();
     }
 
-
     delay(10); // DELAY ///////////////
   }
-        
+
   stop();
   // BluetoothSerial.println("YAYAYAYAY");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
@@ -667,13 +690,12 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
 
 void turn_n_degrees(int deg)
 {
-  const float Kp = 180; //calibrate them
+  const float Kp = 180; // calibrate them
   const float Ki = 0.1;
   const float Kd = 0.002;
   const float tolerance = (1.0 * PI) / 180.0; // 2 degrees in radians
-  const int max_output = 400; // PREVIOUSLY 200 :)
-  const int min_power = 60; // Adjust this! Find the minimum microsecond offset needed to move the robot.
-
+  const int max_output = 400;                 // PREVIOUSLY 200 :)
+  const int min_power = 60;                   // Adjust this! Find the minimum microsecond offset needed to move the robot.
 
   const unsigned long required_settle_time = 250;
   unsigned long settle_start_time = 0;
@@ -689,6 +711,7 @@ void turn_n_degrees(int deg)
 
   while (millis() - fuck_off < 3000)
   {
+    budget_slam();
     unsigned long now = micros();
     float dt = (now - last_time) / 1000000.0;
     if (dt <= 0.00)
@@ -697,28 +720,26 @@ void turn_n_degrees(int deg)
     }
     last_time = now;
 
-
     float current_heading = get_rotation_vector_yaw(); // updates robot_heading
     float error = angle_diff(target_heading, current_heading);
     float abs_error = fabs(error);
 
-
     if (abs_error <= tolerance)
     {
-      if (!is_settling) 
+      if (!is_settling)
       {
         // Just entered the target zone, start the timer
         settle_start_time = millis();
         is_settling = true;
-      } 
-      else if (millis() - settle_start_time >= required_settle_time) 
+      }
+      else if (millis() - settle_start_time >= required_settle_time)
       {
         // Remained in the target zone long enough, success!
         BluetoothSerial.println("Target reached and settled.");
-        break; 
+        break;
       }
     }
-    else 
+    else
     {
       // Fell out of the target zone (overshot), reset the settling timer
       is_settling = false;
@@ -732,19 +753,21 @@ void turn_n_degrees(int deg)
 
     float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
 
-    
-    if (output > 0 && output < min_power) {
+    if (output > 0 && output < min_power)
+    {
       output = min_power;
-    } else if (output < 0 && output > -min_power) {
+    }
+    else if (output < 0 && output > -min_power)
+    {
       output = -min_power;
     }
-  
+
     float command = constrain(output, -max_output, max_output);
 
-    left_font_motor.writeMicroseconds(1500 - ( command));
-    left_rear_motor.writeMicroseconds(1500 - ( command));
+    left_font_motor.writeMicroseconds(1500 - (command));
+    left_rear_motor.writeMicroseconds(1500 - (command));
     right_rear_motor.writeMicroseconds(1500 - (command));
-    right_font_motor.writeMicroseconds(1500 - ( command));
+    right_font_motor.writeMicroseconds(1500 - (command));
 
     // if (millis() - last_print > 200) {
     //       // BluetoothSerial.print("output: ");

@@ -4,98 +4,80 @@
 #include "motors.h"
 #include "homing.h"
 
-// void farming_init()
-// {
-
-//   // turret_motor.write(90); // point the servo left
-//   int num_tramlines = int(TABLE_WIDTH) % JOHN_ROBOT_WIDTH; // find out how mant tramlines there are
-//   float laneTargets[num_tramlines];
-
-//   for (int john = 1; john <= num_tramlines; john++)
-//   {
-//     laneTargets[john - 1] = (TABLE_WIDTH / num_tramlines) * john;
-//   }
-
-//   // = {20, 44, 68, 92, 116}; // this needs to be variable, not hardcoded in to the code, like it reads with the ultrasonic sensor how far away it is and then divides that up into tramlines etc
-
-//   // --- PID --- PD implementation because error will always exist (Ki inappropriate)
-//   Kp = 2.0;
-//   Ki = 0.001;
-//   Kd = 0.01;
-
-//   ortho_error = 0;
-//   prev_error = 0;
-
-//   baseSpeed = 120;
-//   maxCorrection = 80;
-// }
-
-void farming() {
+void farming()
+{
     // BluetoothSerial.println("Starting farming trace...");
 
     // 1. Determine which direction the rest of the course is.
     // 1 = Right, 0 = Left (matching your strafe functions)
-    int strafe_dir = 1; 
-    if (getLeftLR() > getRightLR()) {
+    int strafe_dir = 1;
+    if (getLeftLR() > getRightLR())
+    {
         strafe_dir = 0; // Left side is open
     }
 
     // 2. Define Thresholds
-    const float LANE_WIDTH = 100.0;           // mm to strafe for each lane
-    const float REAR_WALL_TARGET = 155; //mm target for US sensor when driving backwards (course is 1991mm long)
+    const float LANE_WIDTH = 100.0;     // mm to strafe for each lane
+    const float REAR_WALL_TARGET = 155; // mm target for US sensor when driving backwards (course is 1991mm long)
     const float FWD_WALL_TARGET = 10;
     // const float STARTING_US_DIST = getUSDistance();
     // delay(100);
     BluetoothSerial.print("rear wall target: ");
     BluetoothSerial.println(REAR_WALL_TARGET);
     // delay(100);
-    const float SIDE_WALL_THRESHOLD = 100;  // mm distance to far wall to consider course complete
+    const float SIDE_WALL_THRESHOLD = 100; // mm distance to far wall to consider course complete
 
     bool course_completed = false;
     bool driving_forward = true;
     int forward_counter = 0;
 
-    while (!course_completed) {
-        
+    while (!course_completed)
+    {
+
         // --- 1. TRACE THE LANE ---
-        if (driving_forward) {
+        if (driving_forward)
+        {
             // BluetoothSerial.println("Farming: Driving Forward...");
             // drive_straight_poc(); // Drives until SR sensors < 100mm
             drive_tothis_poc(FWD_WALL_TARGET);
             // AlignWithWall();
             forward_counter++;
-            if(forward_counter % 2 == 0){
+            if (forward_counter % 2 == 0)
+            {
                 AlignWithWall();
             }
-        } else {
+        }
+        else
+        {
             // BluetoothSerial.println("Farming: Driving Backwards...");
-            drive_tothis_poc(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm   
+            drive_tothis_poc(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
 
-            // drive_tothis_poc(getUSDistance() - STARTING_US_DIST); // Drives backward until US sensor reads (1980 - (210+10))mm   
+            // drive_tothis_poc(getUSDistance() - STARTING_US_DIST); // Drives backward until US sensor reads (1980 - (210+10))mm
             // BluetoothSerial.print("Driving backwards:");
-            // BluetoothSerial.println(getUSDistance() - STARTING_US_DIST);   
+            // BluetoothSerial.println(getUSDistance() - STARTING_US_DIST);
         }
 
-        delay(75); // Allow momentum to settle 
+        delay(75); // Allow momentum to settle
 
         // --- 2. CHECK IF WE REACHED THE END OF THE COURSE ---
         // Look at the LR sensor in the direction we are strafing.
         float side_dist = (strafe_dir == 1) ? getRightLR() : getLeftLR();
-        if (side_dist < SIDE_WALL_THRESHOLD) {
+        if (side_dist < SIDE_WALL_THRESHOLD)
+        {
             BluetoothSerial.println("Course fully traced. Farming complete.");
             course_completed = true;
-            break; 
+            break;
         }
 
         // --- 3. STRAFE TO NEXT LANE ---
         BluetoothSerial.println("Farming: Strafing to next lane...");
         strafe_thismuch_poc(strafe_dir, LANE_WIDTH);
-        
+
         // delay(300); // Allow momentum to settle before switching axis
 
         // Flip direction for the next trace
         driving_forward = !driving_forward;
     }
-    
+
     stop();
 }
