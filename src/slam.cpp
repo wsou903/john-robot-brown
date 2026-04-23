@@ -92,39 +92,39 @@ void budget_slam()
         robotY = sum_y / y_count;
 
     // save data to arrays (10Hz)
-    static unsigned long save_timer = 0;
-    if (now - save_timer > 250)
-    {
-        if (slam_point_count < pos_readings)
-        {
-            history_X[slam_point_count] = robotX;
-            history_Y[slam_point_count] = robotY;
-            slam_point_count++;
-        }
-        else
-        {
-
-            // BluetoothSerial.println("slam full");
-        }
-        save_timer = now;
-    }
-    // 5. OUTPUT DATA
-    // static unsigned long print_timer = 0;
-    // if (now - print_timer > 100)
+    // static unsigned long save_timer = 0;
+    // if (now - save_timer > 250)
     // {
-    //     BluetoothSerial.print("DATA,");
-    //     delay(10);
-    //     BluetoothSerial.print(robotX);
-    //     delay(10);
-    //     BluetoothSerial.print(",");
-    //     delay(10);
-    //     BluetoothSerial.print(robotY);
-    //     delay(10);
-    //     BluetoothSerial.print(",");
-    //     delay(10);
-    //     BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
-    //     print_timer = now;
+    //     if (slam_point_count < pos_readings)
+    //     {
+    //         history_X[slam_point_count] = robotX;
+    //         history_Y[slam_point_count] = robotY;
+    //         slam_point_count++;
+    //     }
+    //     else
+    //     {
+
+    //         // BluetoothSerial.println("slam full");
+    //     }
+    //     save_timer = now;
     // }
+    // 5. OUTPUT DATA
+    static unsigned long print_timer = 0;
+    if (now - print_timer > 100)
+    {
+        BluetoothSerial.print("DATA,");
+
+        BluetoothSerial.print(robotX);
+
+        BluetoothSerial.print(",");
+
+        BluetoothSerial.print(robotY);
+
+        BluetoothSerial.print(",");
+
+        BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
+        print_timer = now;
+    }
 }
 
 // void budget_slam()
@@ -202,25 +202,25 @@ void budget_slam()
 //     }
 // }
 
-void dump_slam_data()
-{
-    BluetoothSerial.println("--- DUMP START ---");
-    delay(10);
-    BluetoothSerial.print("Total Points Recorded: ");
-    delay(10);
-    BluetoothSerial.println(slam_point_count);
-    delay(10);
-    BluetoothSerial.println("X, Y"); // CSV Header
-    delay(10);
-    for (int i = 0; i < slam_point_count; i++)
-    {
-        BluetoothSerial.print(history_X[i]);
-        delay(10);
-        BluetoothSerial.print(",");
-        delay(10);
-        BluetoothSerial.println(history_Y[i]);
-        delay(10);
-    }
+// void dump_slam_data()
+// {
+//     BluetoothSerial.println("--- DUMP START ---");
+//     delay(10);
+//     BluetoothSerial.print("Total Points Recorded: ");
+//     delay(10);
+//     BluetoothSerial.println(slam_point_count);
+//     delay(10);
+//     BluetoothSerial.println("X, Y"); // CSV Header
+//     delay(10);
+//     for (int i = 0; i < slam_point_count; i++)
+//     {
+//         BluetoothSerial.print(history_X[i]);
+//         delay(10);
+//         BluetoothSerial.print(",");
+//         delay(10);
+//         BluetoothSerial.println(history_Y[i]);
+//         delay(10);
+//     }
 
-    BluetoothSerial.println("end");
-}
+//     BluetoothSerial.println("end");
+// }
