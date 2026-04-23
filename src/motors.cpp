@@ -726,12 +726,19 @@ void strafe_thismuch_poc(int direction, float distance)
 
   bool sensor_in_range = (getLeftLR() > getRightLR()); // true if right sensor is in range, false if left sensor
                                                        //  PID VALUES
-  float kp_gyro = 300 * gyro_enabled;
-  float ki_gyro = 1 * gyro_enabled;
-  float kd_gyro = 0.001 * derivative_enabled;
+  // float kp_gyro = 300 * gyro_enabled;
+  // float ki_gyro = 1 * gyro_enabled;
+  // float kd_gyro = 0.001 * derivative_enabled;
 
-  float kp_us = 50 * us_enabled;
-  float ki_us = 0.1 * us_enabled;
+  // float kp_us = 50 * us_enabled;
+  // float ki_us = 0.1 * us_enabled;
+
+  float kp_gyro = 150 * 5 * gyro_enabled;
+  float ki_gyro = 3 * gyro_enabled;
+  float kd_gyro = 5 * derivative_enabled;
+
+  float kp_us = 25 * us_enabled;
+  float ki_us = 0.5 * us_enabled;
 
   float err_gyro, err_us, ir_u, gyro_u, us_u, gyro_read, us_read;
 
@@ -848,25 +855,25 @@ void strafe_thismuch_poc(int direction, float distance)
     }
 
     // DEBUGS
-    if (millis() - last_print > 200)
-    {
-      BluetoothSerial.print("t: ");
-      BluetoothSerial.println(target_sensor_distance, 3);
-      BluetoothSerial.println();
+    // if (millis() - last_print > 200)
+    // {
+    //   BluetoothSerial.print("t: ");
+    //   BluetoothSerial.println(target_sensor_distance, 3);
+    //   BluetoothSerial.println();
 
-      // delay(10);
-      BluetoothSerial.print("c: ");
-      if (sensor_in_range)
-      {
-        BluetoothSerial.println(getRightLR() - target_sensor_distance);
-      }
-      else
-      {
-        BluetoothSerial.println(getLeftLR() - target_sensor_distance);
-      }
-      BluetoothSerial.println();
-      last_print = millis();
-    }
+    //   // delay(10);
+    //   BluetoothSerial.print("c: ");
+    //   if (sensor_in_range)
+    //   {
+    //     BluetoothSerial.println(getRightLR() - target_sensor_distance);
+    //   }
+    //   else
+    //   {
+    //     BluetoothSerial.println(getLeftLR() - target_sensor_distance);
+    //   }
+    //   BluetoothSerial.println();
+    //   last_print = millis();
+    // }
 
     delay(10); // DELAY ///////////////
   }

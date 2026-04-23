@@ -25,7 +25,7 @@ void farming()
     float align_calc_output[2] = {0}; // for angle align calc
 
     // 2. Define Thresholds
-    const float LANE_WIDTH = 100.0;     // mm to strafe for each lane
+    const float LANE_WIDTH = 120.0;     // mm to strafe for each lane
     const float REAR_WALL_TARGET = 160; // mm target for US sensor when driving backwards (course is 1991mm long)
     const float FWD_WALL_TARGET = 10;
     // const float STARTING_US_DIST = getUSDistance();
@@ -87,8 +87,8 @@ void farming()
 
         // --- 3. STRAFE TO NEXT LANE ---
         BluetoothSerial.println("Farming: Strafing to next lane...");
-        // strafe_thismuch_poc(strafe_dir, LANE_WIDTH);
-        strafe_straight_poc(strafe_dir);
+        strafe_thismuch_poc(strafe_dir, LANE_WIDTH);
+        // strafe_straight_poc(strafe_dir);
 
         // delay(300); // Allow momentum to settle before switching axis
 
