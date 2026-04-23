@@ -106,7 +106,7 @@ STATE initialising()
 #endif
 
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // delay(3000);
+  delay(3000);
   G28(); // homing to get to corner ////////////////////////////////// G28 :)
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
@@ -132,9 +132,12 @@ STATE running()
     // strafe_thismuch_poc(1, 100); // Strafe right for 100mm
     // delay(5000);
 
+    // drive_tothis_poc_GV(-200); // Drive forward for 200mm
+
     farming();
-    BluetoothSerial.println("course completion");
-    dump_slam_data();
+    // BluetoothSerial.println("course completion");
+    // strafe_straight_poc(1); // Strafe right until wall proximity
+    // dump_slam_data();
     delay(30000);
 
 #ifndef NO_BATTERY_V_OK
