@@ -6,9 +6,9 @@ void G28()
   BluetoothSerial.println("driving to wall");
   sweep(); // sweep to find the wall and turn towards it
   drive_straight_poc();
-  delay(100);
+  delay(20);
   AlignWithWall();
-  delay(50);
+  delay(20);
   BluetoothSerial.println("Aligned!!!");
   bool direction = 1; //true is turning right, false is turning left
   if(getLeftLR() < getRightLR()){
@@ -23,13 +23,13 @@ void G28()
   AlignWithWall();
   if (direction){
     turn_n_degrees(-90);
-    delay(100);
+    delay(20);
     if (getUSDistance() < 150){
       turn_n_degrees(-90);
     }
   } else {
     turn_n_degrees(90);
-    delay(100);
+    delay(20);
     if (getUSDistance() < 150){
       turn_n_degrees(90);
     }
@@ -72,7 +72,7 @@ void sweep() {
         }
     }
     stop(); // Stop spinning
-    delay(100); // Small delay to ensure the robot has stopped before processing data
+    delay(20); // Small delay to ensure the robot has stopped before processing data
 
     // 3. Find min distance index
     int turn_index = find_min_index(distances, n);
@@ -103,7 +103,7 @@ void AlignWithWall()
   bool aligned = false;
   while (!aligned)
   {
-    delay(100); // add a small delay to prevent overwhelming the sensors and control system
+    delay(20); // add a small delay to prevent overwhelming the sensors and control system
     Align_calc(movement);
     if (fabs(movement[0] - 65) < 7.5)
     {
@@ -121,7 +121,7 @@ void AlignWithWall()
       distance_happy = false; // if we had to move, we might need to move again after checking angle, so reset this flag
       continue; // skip the angle check this loop, we want to check angle after we have
     }
-    delay(50);
+    // delay(20);
     if (fabs(movement[1]) < 0.025)
     {
       BluetoothSerial.print("angle happy: ");
@@ -136,7 +136,7 @@ void AlignWithWall()
       angle_happy = false; // if we had to turn, we might need to turn again after checking distance, so reset this flag
       continue; // skip the distance check this loop, we want to check distance after we have the correct angle
     }
-    delay(50);
+    // delay(50);
     if (angle_happy && distance_happy)
     {
       aligned = true;

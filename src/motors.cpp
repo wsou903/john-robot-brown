@@ -318,12 +318,12 @@ void drive_tothis_poc(float distance)
   // float lr_initial = avg_lr_read;
   gyro_read = get_rotation_vector_yaw();
   float gyro_initial = gyro_read;
-  unsigned long fucky = millis();
+  // unsigned long fucky = millis();
 
   unsigned long last_print = millis();
 
   // loop
-  while (!wall_proximity && (millis() - fucky < 15000)){
+  while (!wall_proximity){
 
     if (fabs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
@@ -570,7 +570,7 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
   gyro_read = get_rotation_vector_yaw();
   us_read = getUSDistance();
   float us_initial = us_read, gyro_initial = gyro_read;
-  delay(100);
+  // delay(100);
 
   // loop
   while (!wall_proximity && (millis() - fuck < 1000)){
@@ -640,18 +640,18 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
 
 
     // DEBUGS 
-    if (millis() - last_print > 100) {
-      BluetoothSerial.print("target: ");
-      BluetoothSerial.println(target_sensor_distance, 4);
+    if (millis() - last_print > 200) {
+      BluetoothSerial.print("t: ");
+      BluetoothSerial.println(target_sensor_distance, 3);
       BluetoothSerial.println();
-      delay(10);
-      BluetoothSerial.print("current: ");
+      
+      // delay(10);
+      BluetoothSerial.print("c: ");
       if(sensor_in_range){
         BluetoothSerial.println(getRightLR() - target_sensor_distance);
       } else {
       BluetoothSerial.println(getLeftLR() - target_sensor_distance);
       }
-      delay(10);
       BluetoothSerial.println();
       last_print = millis();
     }
@@ -671,7 +671,7 @@ void turn_n_degrees(int deg)
   const float Ki = 0.1;
   const float Kd = 0.002;
   const float tolerance = (1.0 * PI) / 180.0; // 2 degrees in radians
-  const int max_output = 200;
+  const int max_output = 400; // PREVIOUSLY 200 :)
   const int min_power = 60; // Adjust this! Find the minimum microsecond offset needed to move the robot.
 
 
