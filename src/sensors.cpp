@@ -184,20 +184,20 @@ void TestIRSensors() {
 
   while (true) {
     if ((millis() - timer) > 1000) {
-      // BluetoothSerial.print("right lr:");
-      // BluetoothSerial.println(getRightLR());
-      // delay(500);
-      // BluetoothSerial.print(",");
-      // BluetoothSerial.print("left lr:");
-      // BluetoothSerial.println(getLeftLR());
+      BluetoothSerial.print("right lr:");
+      BluetoothSerial.println(getRightLR());
       delay(500);
-      // Serial.print("LR1:");
+      BluetoothSerial.print(",");
+      BluetoothSerial.print("left lr:");
+      BluetoothSerial.println(getLeftLR());
+      delay(500);
+      // BluetoothSerial.print("LR1:");
       // Serial.print(getLeftLR());
       // Serial.print(",");
       // Serial.print("LR2:");
       // Serial.print(getRightLR());
-      BluetoothSerial.print("US:");
-      BluetoothSerial.println(getUSDistance());
+      // BluetoothSerial.print("US:");
+      // BluetoothSerial.println(getUSDistance());
 
       BluetoothSerial.println();
       delay(50);

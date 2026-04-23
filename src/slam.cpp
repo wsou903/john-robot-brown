@@ -26,64 +26,149 @@ void budget_slam()
 
     // get all sensors values
     float us_front = getUSDistance();
-    float sr_front_left = getValidSR(getLeftSR());
-    float sr_front_right = getValidSR(getRightSR());
-    float lr_left = getValidLR(getLeftLR());   // Assuming Left LR is on Left side
-    float lr_right = getValidLR(getRightLR()); // Assuming Right LR is on Right side
+    // float sr_front_left = getValidSR(getLeftSR());
+    // float sr_front_right = getValidSR(getRightSR());
+    // float lr_left = getValidLR(getLeftLR());   // Assuming Left LR is on Left side
+    // float lr_right = getValidLR(getRightLR()); // Assuming Right LR is on Right side
+    float lr_left = getLeftLR();
+    float lr_right = getRightLR();
+    float yaw = get_rotation_vector_yaw();
 
-    int x_count = 0;
-    int y_count = 0;
-    int sum_x = 0;
-    int sum_y = 0;
+    float x_count = 0;
+    float y_count = 0;
+    float sum_x = 0;
+    float sum_y = 0;
 
     // get coord estimate using lambda func
-    auto addCoordinateEstimate = [&](int distance, float mounted_angle)
-    {
-        if (distance <= 0)
-            return; // Ignore invalid readings
+    // auto addCoordinateEstimate = [&](int distance, float mounted_angle)
+    // {
+    //     if (distance <= 0)
+    //         return; // Ignore invalid readings
 
-        // Robot orientation + where the sensor is pointing
-        float global_angle = robot_heading + mounted_angle;
+    //     // Robot orientation + where the sensor is pointing
+    //     float global_angle = robot_heading + mounted_angle;
 
-        // Normalize angle to -PI to PI
-        while (global_angle > PI)
-            global_angle -= TWO_PI;
-        while (global_angle < -PI)
-            global_angle += TWO_PI;
+    //     // Normalize angle to -PI to PI
+    //     while (global_angle > PI)
+    //         global_angle -= TWO_PI;
+    //     while (global_angle < -PI)
+    //         global_angle += TWO_PI;
 
-        float c = cos(global_angle);
-        float s = sin(global_angle);
+    //     float c = cos(global_angle);
+    //     float s = sin(global_angle);
 
-        // Calculate X (Pointing toward Front/Back walls)
-        if (abs(c) > 0.707) // Within 45 degrees of X axis
-        {
-            if (c > 0)
-                sum_x += TABLE_LENGTH - (distance * abs(c));
-            else
-                sum_x += (distance * abs(c));
-            x_count++;
-        }
+    //     // Calculate X (Pointing toward Front/Back walls)
+    //     if (abs(c) > 0.707) // Within 45 degrees of X axis
+    //     {
+    //         if (c > 0)
+    //             sum_x += TABLE_LENGTH - (distance * abs(c));
+    //         else
+    //             sum_x += (distance * abs(c));
+    //         x_count++;
+    //     }
 
-        // Calculate Y (Pointing toward Side walls)
-        if (abs(s) > 0.707) // Within 45 degrees of Y axis
-        {
-            if (s > 0)
-                sum_y += distance * abs(s);
-            else
-                sum_y += TABLE_WIDTH - (distance * abs(s));
-            y_count++;
-        }
-    };
+    //     // Calculate Y (Pointing toward Side walls)
+    //     if (abs(s) > 0.707) // Within 45 degrees of Y axis
+    //     {
+    //         if (s > 0)
+    //             sum_y += distance * abs(s);
+    //         else
+    //             sum_y += TABLE_WIDTH - (distance * abs(s));
+    //         y_count++;
+    //     }
+    // };
+    //   int sum_y = 0;
+    // int y_count = 0;
+     // bool sensor_in_range = (getLeftLR() > getRightLR());
+
+    // if (direction && sensor_in_range)
+    // {
+    //     robotY = robotY + lr_right;
+    // }
+    // else if (direction && !sensor_in_range)
+    // {
+    //     robotY = robotY + lr_left;
+    // }
+    // else if (!direction && sensor_in_range)
+    // {
+    //     robotY = robotY + lr_right;
+    // }
+    // else
+    // {
+    //     robotY = robotY + lr_left;
+    // }
+    // 3. Calculate Y from Left Sensor(if valid) 
+    // if (lr_left > 0)
+    // {
+    //     // We use cos(robot_heading) to correct for the robot being tilted
+    //     float y_estimate_left = (lr_left * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2);
+    //     sum_y += y_estimate_left;
+    //     y_count++;
+    // }
+
+    // // 4. Calculate Y from Right Sensor (if valid)
+    // if (lr_right > 0)
+    // {
+    //     // Distance from right wall subtracted from total width
+    //     float y_estimate_right = (TABLE_WIDTH - ((lr_right * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2)));
+    //     sum_y += y_estimate_right;
+    //     y_count++;
+    // }
+
+    // // 5. Average the Y results
+    // if (y_count > 0)
+    // {
+    //     robotY = (sum_y / y_count);
+    // }
+    // bool sensor_in_range = (getLeftLR() > getRightLR());
+
+    // if (direction && sensor_in_range)
+    // {
+    //     robotY = lr_right;
+    // }
+    // else if (direction && !sensor_in_range)
+    // {
+    //     robotY = robotY + lr_left;
+    // }
+    // else if (!direction && sensor_in_range)
+    // {
+    //     robotY = robotY + lr_right;
+    // }
+    // else
+    // {
+    //     robotY = robotY + lr_left;
+    // }
+
+    // 1. Check which sensor is closer (smaller value is usually more reliable)
+    // bool left_is_closer = (lr_left < lr_right);
+
+    // if (left_is_closer)
+    // {
+    //     // Y is just the distance from the left wall (0)
+    //     // Plus the offset for the robot's center
+    //     robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
+    // }
+    // else 
+    // {
+    //     // Y is the Table Width minus the distance from the right wall
+    //     // This flips the coordinate so both sensors agree on the same Y-plane
+    //     robotY = TABLE_WIDTH - (lr_right + (JOHN_ROBOT_WIDTH / 2.0));
+    // }
+
+    robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
+
+    robotX = us_front + ((JOHN_ROBOT_WIDTH / 10) / 2);
+
 
     // map angles
     // Front sensors (angle 0)
-    addCoordinateEstimate(us_front, 0.0);
-    addCoordinateEstimate(sr_front_left, 0.0);
-    addCoordinateEstimate(sr_front_right, 0.0);
+    // addCoordinateEstimate(us_front, 0.0);
+    // addCoordinateEstimate(sr_front_left, 0.0);
+    // addCoordinateEstimate(sr_front_right, 0.0);
 
-    // Side sensors (Left is +PI/2, Right is -PI/2)
-    addCoordinateEstimate(lr_left, HALF_PI);   // 90 degrees
-    addCoordinateEstimate(lr_right, -HALF_PI); // -90 degrees
+    // // Side sensors (Left is +PI/2, Right is -PI/2)
+    // addCoordinateEstimate(lr_left, HALF_PI);   // 90 degrees
+    // addCoordinateEstimate(lr_right, -HALF_PI); // -90 degrees
 
     // average the results
     if (x_count > 0)
