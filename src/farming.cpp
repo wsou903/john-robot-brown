@@ -150,11 +150,7 @@ void farming_forward()
             // AlignWithWall();
 
             
-            if (forward_counter % 2 == 0)
-            {
-                AlignWithWall();
-            }
-            forward_counter++;
+
         }
         else
         {
@@ -162,6 +158,12 @@ void farming_forward()
             delay(100);
             Align_calc(align_calc_output); // this needs to be put oput
             inherited_angle = align_calc_output[1];
+            if (forward_counter % 2 == 0)
+            {
+                
+                AlignWithWall();
+            }
+            forward_counter++;
             drive_tothis_poc_GV(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
             // drive_tothis_poc(-REAR_WALL_TARGET);
             // drive_tothis_poc(getUSDistance() - STARTING_US_DIST); // Drives backward until US sensor reads (1980 - (210+10))mm
