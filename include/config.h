@@ -57,7 +57,8 @@ enum STATE
 
 // ------------ GLOBAL OBJECTS
 
-extern SoftwareSerial BluetoothSerial;
+// extern SoftwareSerial BluetoothSerial;
+#define BluetoothSerial Serial1 // Use Hardware Serial1 instead
 // Serial Pointer
 extern HardwareSerial *SerialCom;
 extern Adafruit_BNO08x bno08x;

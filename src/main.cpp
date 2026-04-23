@@ -13,7 +13,8 @@
 // Gyroscope initialisation - Define your reset pin if you have it connected, otherwise use -1
 Adafruit_BNO08x bno08x(-1);
 sh2_SensorValue_t sensorValue;
-SoftwareSerial BluetoothSerial(BLUETOOTH_RX, BLUETOOTH_TX);
+// SoftwareSerial BluetoothSerial(BLUETOOTH_RX, BLUETOOTH_TX);
+
 HardwareSerial *SerialCom;
 
 Servo left_font_motor;
