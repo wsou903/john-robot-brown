@@ -6,12 +6,14 @@
 
 float inherited_angle = 0.0;
 
-int ir_drive_toggle = 0;
+
 
 void farming()
 {
     // BluetoothSerial.println("Starting farming trace...");
     // :)
+    
+    ir_drive_toggle = 1;
 
     // 1. Determine which direction the rest of the course is.
     // 1 = Right, 0 = Left (matching your strafe functions)
