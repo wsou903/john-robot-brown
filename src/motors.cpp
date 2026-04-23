@@ -863,7 +863,7 @@ void strafe_straight_poc(int input)
   }
 
   stop();
-  BluetoothSerial.println("YAYAYAYAY");
+  // BluetoothSerial.println("YAYAYAYAY");
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
@@ -1085,7 +1085,7 @@ void turn_n_degrees(int deg)
       else if (millis() - settle_start_time >= required_settle_time)
       {
         // Remained in the target zone long enough, success!
-        BluetoothSerial.println("Target reached and settled.");
+        // BluetoothSerial.println("Target reached and settled.");
         break;
       }
     }
