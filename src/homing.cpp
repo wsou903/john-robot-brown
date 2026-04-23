@@ -149,7 +149,7 @@ void AlignWithWall()
 
 void Align_calc(float *array)
 {
-  const unsigned long delay_millis = 1000;
+  const unsigned long delay_millis = 250;
   const unsigned long polling_rate = 10;
   const unsigned long loops = delay_millis / polling_rate;
 
