@@ -122,7 +122,7 @@ void AlignWithWall()
       continue; // skip the angle check this loop, we want to check angle after we have
     }
     // delay(20);
-    if (fabs(movement[1]) < 0.025)
+    if (fabs(movement[1]) < 0.05) // ~3 degrees, adjust as necessary
     {
       // BluetoothSerial.print("angle happy: ");
       // BluetoothSerial.println(movement[1]);
