@@ -103,7 +103,7 @@ STATE initialising()
 
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
-  // G28(); // homing to get to corner ////////////////////////////////// G28 :)
+  G28(); // homing to get to corner ////////////////////////////////// G28 :)
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
 

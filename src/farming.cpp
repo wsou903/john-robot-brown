@@ -2,6 +2,7 @@
 #include "sensors.h"
 #include "helpers.h"
 #include "motors.h"
+#include "homing.h"
 
 // void farming_init()
 // {
@@ -55,11 +56,13 @@ void farming() {
         
         // --- 1. TRACE THE LANE ---
         if (driving_forward) {
-            BluetoothSerial.println("Farming: Driving Forward...");
+            // BluetoothSerial.println("Farming: Driving Forward...");
             drive_straight_poc(); // Drives until SR sensors < 100mm
+            AlignWithWall();
         } else {
-            BluetoothSerial.println("Farming: Driving Backwards...");
+            // BluetoothSerial.println("Farming: Driving Backwards...");
             drive_tothis_poc(-REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
+            
         }
 
         delay(300); // Allow momentum to settle 

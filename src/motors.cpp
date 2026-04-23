@@ -321,7 +321,7 @@ void drive_tothis_poc(float distance)
   unsigned long fucky = millis();
 
   // loop
-  while (!wall_proximity || (millis() - fucky < 5000)){
+  while (!wall_proximity && (millis() - fucky < 5000)){
 
     if (fabs(getUSDistance() - target_US_distance) < 0.5) {
       wall_proximity = true;
@@ -575,7 +575,7 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
   delay(100);
 
   // loop
-  while (!wall_proximity || (millis() - fuck < 1000)){
+  while (!wall_proximity && (millis() - fuck < 1000)){
 
     if(sensor_in_range){
       if(fabs(getRightLR() - target_sensor_distance) < 2){
@@ -643,18 +643,18 @@ void strafe_thismuch_poc(int direction, float distance){ // 1 is right, 0 is lef
 
     // DEBUGS 
     if (millis() - last_print > 100) {
-      // BluetoothSerial.print("target: ");
-      // BluetoothSerial.println(target_sensor_distance, 4);
-      // BluetoothSerial.println();
-      // delay(10);
-      // BluetoothSerial.print("current: ");
-      // if(sensor_in_range){
-      //   BluetoothSerial.println(getRightLR() - target_sensor_distance);
-      // } else {
-      // BluetoothSerial.println(getLeftLR() - target_sensor_distance);
-      // }
+      BluetoothSerial.print("target: ");
+      BluetoothSerial.println(target_sensor_distance, 4);
+      BluetoothSerial.println();
       delay(10);
-      // BluetoothSerial.println();
+      BluetoothSerial.print("current: ");
+      if(sensor_in_range){
+        BluetoothSerial.println(getRightLR() - target_sensor_distance);
+      } else {
+      BluetoothSerial.println(getLeftLR() - target_sensor_distance);
+      }
+      delay(10);
+      BluetoothSerial.println();
       last_print = millis();
     }
 
