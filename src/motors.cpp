@@ -181,10 +181,10 @@ void drive_straight_poc()
   float kd_gyro = 5 * derivative_enabled;
 
   //   // PID VALUES // OLD BEAUTIFUL 150 SPEED_VAL SPEEDS :) SORT OF OK
-  float kp_ir = 0.5*ir_enabled;
+  float kp_ir = 10*ir_enabled;
   // float kp_gyro = 120 * gyro_enabled;
 
-  float ki_ir = 0.001*ir_enabled;
+  float ki_ir = 0*0.001*ir_enabled;
   // float ki_gyro = 3 * gyro_enabled;
 
   // float kd_gyro = 5 * derivative_enabled;
