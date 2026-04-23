@@ -156,7 +156,7 @@ void budget_slam()
     //     robotY = TABLE_WIDTH - (lr_right + (JOHN_ROBOT_WIDTH / 2.0));
     // }
 
-    if (strafe_dir_global == 1){
+    if (strafe_dir_global == 0){
         robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
     } else {
         robotY = TABLE_WIDTH - (lr_right + (JOHN_ROBOT_WIDTH / 2.0));
