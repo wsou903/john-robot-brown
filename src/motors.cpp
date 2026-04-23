@@ -159,7 +159,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
       ang_vel_ratio[john] = 0;
     }
   }
-  BluetoothSerial.println("Ratios: " + String(ang_vel_ratio[0], 2) + ", " + String(ang_vel_ratio[1], 2) + ", " + String(ang_vel_ratio[2], 2) + ", " + String(ang_vel_ratio[3], 2));
+  // BluetoothSerial.println("Ratios: " + String(ang_vel_ratio[0], 2) + ", " + String(ang_vel_ratio[1], 2) + ", " + String(ang_vel_ratio[2], 2) + ", " + String(ang_vel_ratio[3], 2));
 }
 
 void drive_straight_poc()
@@ -316,7 +316,7 @@ void drive_straight_poc()
 
 void drive_straight_poc_GV()
 {
-  int ir_enabled = 0 * ir_drive_toggle;
+  int ir_enabled = 1;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
@@ -578,12 +578,12 @@ void drive_tothis_poc_GV(float distance)
     }
 
     // DEBUGS
-    if (millis() - last_print > 200)
-    {
-      BluetoothSerial.print("err_us:");
-      BluetoothSerial.println(current_US);
-      last_print = millis();
-    }
+    // if (millis() - last_print > 200)
+    // {
+    //   BluetoothSerial.print("err_us:");
+    //   BluetoothSerial.println(current_US);
+    //   last_print = millis();
+    // }
 
     delay(10); // DELAY ///////////////
   }
@@ -702,12 +702,12 @@ void drive_tothis_poc(float distance)
     }
 
     // DEBUGS
-    if (millis() - last_print > 200)
-    {
-      BluetoothSerial.print("err_us:");
-      BluetoothSerial.println(current_US);
-      last_print = millis();
-    }
+    // if (millis() - last_print > 200)
+    // {
+    //   BluetoothSerial.print("err_us:");
+    //   BluetoothSerial.println(current_US);
+    //   last_print = millis();
+    // }
 
     delay(10); // DELAY ///////////////
   }
@@ -847,17 +847,17 @@ void strafe_straight_poc(int input)
       right_rear_motor.writeMicroseconds(1500 - speed_val - gyro_u + us_u);
     }
 
-    // DEBUGS
-    if (millis() - last_print > 100)
-    {
-      // BluetoothSerial.print("err_gyro: ");
-      // BluetoothSerial.println(err_gyro, 4);
-      // BluetoothSerial.println();
-      // BluetoothSerial.print("us_u: ");
-      // BluetoothSerial.println(us_u, 2);
-      // BluetoothSerial.println();
-      last_print = millis();
-    }
+    // // DEBUGS
+    // if (millis() - last_print > 100)
+    // {
+    //   // BluetoothSerial.print("err_gyro: ");
+    //   // BluetoothSerial.println(err_gyro, 4);
+    //   // BluetoothSerial.println();
+    //   // BluetoothSerial.print("us_u: ");
+    //   // BluetoothSerial.println(us_u, 2);
+    //   // BluetoothSerial.println();
+    //   last_print = millis();
+    // }
 
     delay(10); // DELAY ///////////////
   }

@@ -3,13 +3,13 @@
 
 void G28()
 {
-  BluetoothSerial.println("driving to wall");
+  // BluetoothSerial.println("driving to wall");
   sweep(); // sweep to find the wall and turn towards it
   drive_straight_poc();
   delay(20);
   AlignWithWall();
   delay(20);
-  BluetoothSerial.println("Aligned!!!");
+  // BluetoothSerial.println("Aligned!!!");
   bool direction = 1; //true is turning right, false is turning left
   if(getLeftLR() < getRightLR()){
     direction = 0;
@@ -107,14 +107,14 @@ void AlignWithWall()
     Align_calc(movement);
     if (fabs(movement[0] - 65) < 7.5)
     {
-      BluetoothSerial.print("distance happy: ");
-      BluetoothSerial.println(movement[0]);
+      // BluetoothSerial.print("distance happy: ");
+      // BluetoothSerial.println(movement[0]);
       distance_happy = true;
     }
     else
     {
-      BluetoothSerial.print("distance sad, moving: ");
-      BluetoothSerial.println(movement[0]);
+      // BluetoothSerial.print("distance sad, moving: ");
+      // BluetoothSerial.println(movement[0]);
       speed_val = 75;
       drive_tothis_poc((movement[0]/10.0) - 6.5); // need a version of this that moves a set distance, will have to make this for the farming function anyways, alternatively, just make the stop condition for this work in all cases
       speed_val = 150;
@@ -124,14 +124,14 @@ void AlignWithWall()
     // delay(20);
     if (fabs(movement[1]) < 0.025)
     {
-      BluetoothSerial.print("angle happy: ");
-      BluetoothSerial.println(movement[1]);
+      // BluetoothSerial.print("angle happy: ");
+      // BluetoothSerial.println(movement[1]);
       angle_happy = true;
     }
     else 
     {
-      BluetoothSerial.print("angle sad, rotating: ");
-      BluetoothSerial.println(movement[1]);
+      // BluetoothSerial.print("angle sad, rotating: ");
+      // BluetoothSerial.println(movement[1]);
       turn_n_degrees(movement[1] * 180.0 / PI);
       angle_happy = false; // if we had to turn, we might need to turn again after checking distance, so reset this flag
       continue; // skip the distance check this loop, we want to check distance after we have the correct angle
@@ -140,7 +140,7 @@ void AlignWithWall()
     if (angle_happy && distance_happy)
     {
       aligned = true;
-      BluetoothSerial.println("aligned with wall");
+      // BluetoothSerial.println("aligned with wall");
     }
   }
   

@@ -18,175 +18,97 @@ float getValidLR(float raw)
     return (raw >= 10.0 && raw <= 80.0) ? raw : -1.0;
 }
 
-void budget_slam()
-{
-    unsigned long now = millis();
-
-    // get all sensors values
-    float us_front = getUSDistance();
-    float sr_front_left = getValidSR(getLeftSR());
-    float sr_front_right = getValidSR(getRightSR());
-    float lr_left = getValidLR(getLeftLR());   // Assuming Left LR is on Left side
-    float lr_right = getValidLR(getRightLR()); // Assuming Right LR is on Right side
-
-    int x_count = 0;
-    int y_count = 0;
-    int sum_x = 0;
-    int sum_y = 0;
-
-    // get coord estimate using lambda func
-    auto addCoordinateEstimate = [&](int distance, float mounted_angle)
-    {
-        if (distance <= 0)
-            return; // Ignore invalid readings
-
-        // Robot orientation + where the sensor is pointing
-        float global_angle = robot_heading + mounted_angle;
-
-        // Normalize angle to -PI to PI
-        while (global_angle > PI)
-            global_angle -= TWO_PI;
-        while (global_angle < -PI)
-            global_angle += TWO_PI;
-
-        float c = cos(global_angle);
-        float s = sin(global_angle);
-
-        // Calculate X (Pointing toward Front/Back walls)
-        if (abs(c) > 0.707) // Within 45 degrees of X axis
-        {
-            if (c > 0)
-                sum_x += TABLE_LENGTH - (distance * abs(c));
-            else
-                sum_x += (distance * abs(c));
-            x_count++;
-        }
-
-        // Calculate Y (Pointing toward Side walls)
-        if (abs(s) > 0.707) // Within 45 degrees of Y axis
-        {
-            if (s > 0)
-                sum_y += distance * abs(s);
-            else
-                sum_y += TABLE_WIDTH - (distance * abs(s));
-            y_count++;
-        }
-    };
-
-    // map angles
-    // Front sensors (angle 0)
-    addCoordinateEstimate(us_front, 0.0);
-    addCoordinateEstimate(sr_front_left, 0.0);
-    addCoordinateEstimate(sr_front_right, 0.0);
-
-    // Side sensors (Left is +PI/2, Right is -PI/2)
-    addCoordinateEstimate(lr_left, HALF_PI);   // 90 degrees
-    addCoordinateEstimate(lr_right, -HALF_PI); // -90 degrees
-
-    // average the results
-    if (x_count > 0)
-        robotX = sum_x / x_count;
-    if (y_count > 0)
-        robotY = sum_y / y_count;
-
-    // save data to arrays (10Hz)
-    // static unsigned long save_timer = 0;
-    // if (now - save_timer > 100)
-    // {
-    //     if (slam_point_count < pos_readings)
-    //     {
-    //         history_X[slam_point_count] = robotX;
-    //         history_Y[slam_point_count] = robotY;
-    //         slam_point_count++;
-    //     }
-    //     else
-    //     {
-
-    //         // BluetoothSerial.println("slam full");
-    //     }
-    //     save_timer = now;
-    // }
-    // 5. OUTPUT DATA
-    static unsigned long print_timer = 0;
-    if (now - print_timer > 100)
-    {
-        BluetoothSerial.print("DATA,");
-        delay(10);
-        BluetoothSerial.print(robotX);
-        delay(10);
-        BluetoothSerial.print(",");
-        delay(10);
-        BluetoothSerial.print(robotY);
-        delay(10);
-        BluetoothSerial.print(",");
-        delay(10);
-        BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
-        print_timer = now;
-    }
-}
-
 // void budget_slam()
 // {
 //     unsigned long now = millis();
 
 //     // get all sensors values
-//     int us_front = 1000 * getUSDistance();
-//     int lr_left = 1000 * getValidLR(getLeftLR());   // Assuming Left LR is on Left side
-//     int lr_right = 1000 * getValidLR(getRightLR()); // Assuming Right LR is on Right side
-//     float yaw = get_rotation_vector_yaw();
+//     float us_front = getUSDistance();
+//     float sr_front_left = getValidSR(getLeftSR());
+//     float sr_front_right = getValidSR(getRightSR());
+//     float lr_left = getValidLR(getLeftLR());   // Assuming Left LR is on Left side
+//     float lr_right = getValidLR(getRightLR()); // Assuming Right LR is on Right side
 
-//     bool sensor_in_range = (getLeftLR() > getRightLR());
+//     int x_count = 0;
+//     int y_count = 0;
+//     int sum_x = 0;
+//     int sum_y = 0;
 
-//     if (direction && sensor_in_range)
+//     // get coord estimate using lambda func
+//     auto addCoordinateEstimate = [&](int distance, float mounted_angle)
 //     {
-//         robotY = robotY + lr_right;
-//     }
-//     else if (direction && !sensor_in_range)
-//     {
-//         robotY = robotY + lr_left;
-//     }
-//     else if (!direction && sensor_in_range)
-//     {
-//         robotY = robotY + lr_right;
-//     }
-//     else
-//     {
-//         robotY = robotY + lr_left;
-//     }
+//         if (distance <= 0)
+//             return; // Ignore invalid readings
 
-//     // int sum_y = 0;
-//     // int y_count = 0;
+//         // Robot orientation + where the sensor is pointing
+//         float global_angle = robot_heading + mounted_angle;
 
-//     // 3. Calculate Y from Left Sensor (if valid)
-//     // if (lr_left > 0)
+//         // Normalize angle to -PI to PI
+//         while (global_angle > PI)
+//             global_angle -= TWO_PI;
+//         while (global_angle < -PI)
+//             global_angle += TWO_PI;
+
+//         float c = cos(global_angle);
+//         float s = sin(global_angle);
+
+//         // Calculate X (Pointing toward Front/Back walls)
+//         if (abs(c) > 0.707) // Within 45 degrees of X axis
+//         {
+//             if (c > 0)
+//                 sum_x += TABLE_LENGTH - (distance * abs(c));
+//             else
+//                 sum_x += (distance * abs(c));
+//             x_count++;
+//         }
+
+//         // Calculate Y (Pointing toward Side walls)
+//         if (abs(s) > 0.707) // Within 45 degrees of Y axis
+//         {
+//             if (s > 0)
+//                 sum_y += distance * abs(s);
+//             else
+//                 sum_y += TABLE_WIDTH - (distance * abs(s));
+//             y_count++;
+//         }
+//     };
+
+//     // map angles
+//     // Front sensors (angle 0)
+//     addCoordinateEstimate(us_front, 0.0);
+//     addCoordinateEstimate(sr_front_left, 0.0);
+//     addCoordinateEstimate(sr_front_right, 0.0);
+
+//     // Side sensors (Left is +PI/2, Right is -PI/2)
+//     addCoordinateEstimate(lr_left, HALF_PI);   // 90 degrees
+//     addCoordinateEstimate(lr_right, -HALF_PI); // -90 degrees
+
+//     // average the results
+//     if (x_count > 0)
+//         robotX = sum_x / x_count;
+//     if (y_count > 0)
+//         robotY = sum_y / y_count;
+
+//     // save data to arrays (10Hz)
+//     // static unsigned long save_timer = 0;
+//     // if (now - save_timer > 100)
 //     // {
-//     //     // We use cos(robot_heading) to correct for the robot being tilted
-//     //     int y_estimate_left = 1000 * (lr_left * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2);
-//     //     sum_y += y_estimate_left;
-//     //     y_count++;
+//     //     if (slam_point_count < pos_readings)
+//     //     {
+//     //         history_X[slam_point_count] = robotX;
+//     //         history_Y[slam_point_count] = robotY;
+//     //         slam_point_count++;
+//     //     }
+//     //     else
+//     //     {
+
+//     //         // BluetoothSerial.println("slam full");
+//     //     }
+//     //     save_timer = now;
 //     // }
-
-//     // // 4. Calculate Y from Right Sensor (if valid)
-//     // if (lr_right > 0)
-//     // {
-//     //     // Distance from right wall subtracted from total width
-//     //     float y_estimate_right = 1000 * (TABLE_WIDTH - ((lr_right * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2)));
-//     //     sum_y += y_estimate_right;
-//     //     y_count++;
-//     // }
-
-//     // // 5. Average the Y results
-//     // if (y_count > 0)
-//     // {
-//     //     robotY = (sum_y / y_count) / 1000;
-//     // }
-
-//     robotX = us_front + 1000 * (JOHN_ROBOT_WIDTH / 2);
-
-//     robotX = robotX / 1000;
-//     robotY = robotY / 1000;
+//     // 5. OUTPUT DATA
 //     static unsigned long print_timer = 0;
-//     if (now - print_timer > 200)
+//     if (now - print_timer > 100)
 //     {
 //         BluetoothSerial.print("DATA,");
 //         delay(10);
@@ -202,6 +124,84 @@ void budget_slam()
 //         print_timer = now;
 //     }
 // }
+
+void budget_slam()
+{
+    unsigned long now = millis();
+
+    // get all sensors values
+    int us_front = 1000 * getUSDistance();
+    int lr_left = 1000 * getValidLR(getLeftLR());   // Assuming Left LR is on Left side
+    int lr_right = 1000 * getValidLR(getRightLR()); // Assuming Right LR is on Right side
+    float yaw = get_rotation_vector_yaw();
+
+    bool sensor_in_range = (getLeftLR() > getRightLR());
+
+    if (direction && sensor_in_range)
+    {
+        robotY = robotY + lr_right;
+    }
+    else if (direction && !sensor_in_range)
+    {
+        robotY = robotY + lr_left;
+    }
+    else if (!direction && sensor_in_range)
+    {
+        robotY = robotY + lr_right;
+    }
+    else
+    {
+        robotY = robotY + lr_left;
+    }
+
+    // int sum_y = 0;
+    // int y_count = 0;
+
+    // 3. Calculate Y from Left Sensor (if valid)
+    // if (lr_left > 0)
+    // {
+    //     // We use cos(robot_heading) to correct for the robot being tilted
+    //     int y_estimate_left = 1000 * (lr_left * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2);
+    //     sum_y += y_estimate_left;
+    //     y_count++;
+    // }
+
+    // // 4. Calculate Y from Right Sensor (if valid)
+    // if (lr_right > 0)
+    // {
+    //     // Distance from right wall subtracted from total width
+    //     float y_estimate_right = 1000 * (TABLE_WIDTH - ((lr_right * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2)));
+    //     sum_y += y_estimate_right;
+    //     y_count++;
+    // }
+
+    // // 5. Average the Y results
+    // if (y_count > 0)
+    // {
+    //     robotY = (sum_y / y_count) / 1000;
+    // }
+
+    robotX = us_front + 1000 * (JOHN_ROBOT_WIDTH / 2);
+
+    robotX = robotX / 1000;
+    robotY = robotY / 1000;
+    static unsigned long print_timer = 0;
+    if (now - print_timer > 200)
+    {
+        BluetoothSerial.print("DATA,");
+        delay(10);
+        BluetoothSerial.print(robotX);
+        delay(10);
+        BluetoothSerial.print(",");
+        delay(10);
+        BluetoothSerial.print(robotY);
+        delay(10);
+        BluetoothSerial.print(",");
+        delay(10);
+        BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
+        print_timer = now;
+    }
+}
 
 void dump_slam_data()
 {

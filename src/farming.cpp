@@ -25,13 +25,13 @@ void farming()
     float align_calc_output[2] = {0}; // for angle align calc
 
     // 2. Define Thresholds
-    const float LANE_WIDTH = 120.0;     // mm to strafe for each lane
+    const float LANE_WIDTH = 105.0;     // mm to strafe for each lane
     const float REAR_WALL_TARGET = 160; // mm target for US sensor when driving backwards (course is 1991mm long)
     const float FWD_WALL_TARGET = 10;
     // const float STARTING_US_DIST = getUSDistance();
     // delay(100);
-    BluetoothSerial.print("rear wall target: ");
-    BluetoothSerial.println(REAR_WALL_TARGET);
+    // BluetoothSerial.print("rear wall target: ");
+    // BluetoothSerial.println(REAR_WALL_TARGET);
     // delay(100);
     const float SIDE_WALL_THRESHOLD = 100; // mm distance to far wall to consider course complete
 
@@ -88,7 +88,7 @@ void farming()
         }
 
         // --- 3. STRAFE TO NEXT LANE ---
-        BluetoothSerial.println("Farming: Strafing to next lane...");
+        // BluetoothSerial.println("Farming: Strafing to next lane...");
         strafe_thismuch_poc(strafe_dir, LANE_WIDTH);
         // strafe_straight_poc(strafe_dir);
 
