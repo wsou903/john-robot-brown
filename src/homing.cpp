@@ -1,6 +1,8 @@
 #include "homing.h"
 
 
+float robot_heading_global = 0.0;
+
 void G28()
 {
   // BluetoothSerial.println("driving to wall");
@@ -37,6 +39,7 @@ void G28()
   robotX=0;
   robotY=0;
   robot_heading=0;
+  robot_heading_global = 0.0;
   // strafe_straight_poc(direction);
   // AlignWithWall();
   // if (getLeftLR() > 750){

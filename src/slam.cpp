@@ -2,6 +2,7 @@
 #include "helpers.h"
 #include "sensors.h"
 #include "farming.h"
+#include "homing.h"
 
 const int pos_readings = 200; // 500 points at 100ms = 50 seconds of recording
 int history_X[pos_readings];
@@ -163,7 +164,7 @@ void budget_slam()
     }
     // robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
 
-    robotX = us_front + ((JOHN_ROBOT_WIDTH / 10) / 2);
+    robotX = (us_front + ((JOHN_ROBOT_WIDTH / 10) / 2))*10;
 
 
     // map angles
@@ -200,6 +201,9 @@ void budget_slam()
     //     save_timer = now;
     // }
     // 5. OUTPUT DATA
+
+    robot_heading_global = robot_heading_global + get_rotation_vector_yaw();
+
     static unsigned long print_timer = 0;
     if (now - print_timer > 100)
     {
@@ -213,7 +217,7 @@ void budget_slam()
 
         BluetoothSerial.print(",");
 
-        BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
+        BluetoothSerial.println(robot_heading_global * 180.0 / PI); // Deg for easier reading
         print_timer = now;
     }
 }

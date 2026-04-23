@@ -7,6 +7,7 @@
 #include "helpers.h"
 
 
+extern float robot_heading_global;
 
 void G28();
 void AlignWithWall();
