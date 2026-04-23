@@ -214,7 +214,7 @@ void drive_straight_poc()
   {
     // budget_slam();
 
-    if (getRightSR() < 65 || getLeftSR() < 65)
+    if (getRightSR() < 85 || getLeftSR() < 85)
     {
       wall_proximity = true;
       stop();

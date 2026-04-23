@@ -66,7 +66,7 @@ void loop()
   static STATE machine_state = INITIALISING;
   if (machine_state == RUNNING)
   {
-    budget_slam();
+    // budget_slam();
   }
   // Finite-state machine Code
   switch (machine_state)
@@ -137,7 +137,7 @@ STATE running()
     farming();
     // BluetoothSerial.println("course completion");
     // strafe_straight_poc(1); // Strafe right until wall proximity
-    dump_slam_data();
+    // dump_slam_data();
     delay(30000);
 
 #ifndef NO_BATTERY_V_OK
