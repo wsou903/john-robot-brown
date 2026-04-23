@@ -64,10 +64,10 @@ void setup()
 void loop()
 {
   static STATE machine_state = INITIALISING;
-  if (machine_state == RUNNING)
-  {
-    budget_slam();
-  }
+  // if (machine_state == RUNNING)
+  // {
+  //   budget_slam();
+  // }
   // Finite-state machine Code
   switch (machine_state)
   {

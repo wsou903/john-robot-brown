@@ -15,6 +15,7 @@ void farming()
     {
         strafe_dir = 0; // Left side is open
     }
+    float angle[2] = {0}; // for angle align calc
 
     // 2. Define Thresholds
     const float LANE_WIDTH = 100.0;     // mm to strafe for each lane
@@ -44,6 +45,7 @@ void farming()
             forward_counter++;
             if (forward_counter % 2 == 0)
             {
+                // Align_calc(angle); // this needs to be put oput
                 AlignWithWall();
             }
         }
