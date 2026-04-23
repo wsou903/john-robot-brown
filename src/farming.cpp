@@ -40,9 +40,9 @@ void farming() {
     }
 
     // 2. Define Thresholds
-    const float LANE_WIDTH = 250.0;           // mm to strafe for each lane
-    const float REAR_WALL_TARGET = 1750.0;    // mm target for US sensor when driving backwards (course is 1991mm long)
-    const float SIDE_WALL_THRESHOLD = 250.0;  // mm distance to far wall to consider course complete
+    const float LANE_WIDTH = 100.0;           // mm to strafe for each lane
+    const float REAR_WALL_TARGET = TABLE_HEIGHT - (JOHN_ROBOT_LENGTH+5);    // mm target for US sensor when driving backwards (course is 1991mm long)
+    const float SIDE_WALL_THRESHOLD = 100;  // mm distance to far wall to consider course complete
 
     bool course_completed = false;
     bool driving_forward = true;
@@ -55,7 +55,7 @@ void farming() {
             drive_straight_poc(); // Drives until SR sensors < 100mm
         } else {
             BluetoothSerial.println("Farming: Driving Backwards...");
-            drive_tothis_poc(REAR_WALL_TARGET); // Drives backward until US sensor reads ~1750mm
+            drive_tothis_poc(REAR_WALL_TARGET); // Drives backward until US sensor reads (1980 - (210+10))mm
         }
 
         delay(300); // Allow momentum to settle 

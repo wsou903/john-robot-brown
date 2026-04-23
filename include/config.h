@@ -31,17 +31,17 @@ const byte right_rear = 46;
 const byte right_front = 47;
 
 // ------------- CONSTANTS
-#define TURNING_SAMPLES 57
-#define JOHN_ROBOT_WIDTH 210
-#define JOHN_ROBOT_LENGTH 210
+// #define TURNING_SAMPLES 57
+#define JOHN_ROBOT_WIDTH 210 // mm
+#define JOHN_ROBOT_LENGTH 210 // mm
 #define WHEEL_RADIUS 2.75
 #define HALF_LR_WHEEL_TO_WHEEL 9.5
 #define HALF_FB_WHEEL_TO_WHEEL 8
 #define FB_WHEEL_TO_WHEEL 16
-#define US_OFFSET_SIDE 10 // 10cm from center to left side
-#define US_OFFSET_FRONT 2 // 2cm from center to front
-#define TABLE_WIDTH 121.5 // these probs change --------------------------------------
-#define TABLE_HEIGHT 198.0
+// #define US_OFFSET_SIDE 10 // 10cm from center to left side
+// #define US_OFFSET_FRONT 2 // 2cm from center to front
+#define TABLE_WIDTH 1215.0 // mm 
+#define TABLE_HEIGHT 1980.0 // mm
 #define SR_SPACING 55.0
 #define LR_TO_CENTER 6.5
 #define US_TO_CENTER 10.0

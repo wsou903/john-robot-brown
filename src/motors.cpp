@@ -452,13 +452,6 @@ void strafe_straight_poc(int direction){
 
     us_read = getUSDistance();
 
-    // STOP CONDITION
-    // if (sr_left < 60 || sr_right < 60) {
-    //   wall_proximity = true;
-    //   stop();
-    //   delay(2000);
-    //   break;
-    // }
 
     // error calcs
     err_gyro = angle_diff(gyro_initial, gyro_read);
@@ -502,10 +495,6 @@ void strafe_straight_poc(int direction){
     }
 
 
-    // left_font_motor.writeMicroseconds(  1500 - gyro_u);
-    // left_rear_motor.writeMicroseconds(  1500 - gyro_u);
-    // right_font_motor.writeMicroseconds( 1500 - gyro_u);
-    // right_rear_motor.writeMicroseconds( 1500 - gyro_u);
 
     // DEBUGS 
     if (millis() - last_print > 100) {
@@ -533,7 +522,7 @@ void strafe_thismuch_poc(int direction, float distance){
   int us_enabled = 1;
   int gyro_enabled = 1;
   int derivative_enabled = 0;
-  // lk its fine without the D term with just PI 120/3
+
 
   float last_print = millis();
 
@@ -551,8 +540,10 @@ void strafe_thismuch_poc(int direction, float distance){
   } else {
     target_sensor_distance = getLeftLR() - distance;
   }
+  BluetoothSerial.print("target dist: ");
+      BluetoothSerial.println(target_sensor_distance, 4);
   // PID VALUES
-  float kp_gyro = 120*5*gyro_enabled;
+  float kp_gyro = 300*gyro_enabled;
   float kp_us = 15*us_enabled;
 
   float ki_gyro = 3*gyro_enabled;
@@ -560,31 +551,16 @@ void strafe_thismuch_poc(int direction, float distance){
 
   float kd_gyro = 5*derivative_enabled;
 
-  float err_gyro;
-  float err_us;
-
-  float ir_u;
-  float gyro_u;
-  float us_u;
-
-  float gyro_read;
-  float us_read;
+  float err_gyro, err_us, ir_u ,gyro_u,us_u,gyro_read,us_read;
 
   // sets the current wall distance to be the r(t)
   // sets current gyro to become the reference angle
   gyro_read = get_rotation_vector_yaw();
-  float gyro_initial = gyro_read;
   us_read = getUSDistance();
-  float us_initial = us_read;
+  float us_initial = us_read, gyro_initial = gyro_read;
 
   // loop
   while (!wall_proximity){
-
-    // if (fabs(getUSDistance() - target_US_distance) < 0.5) {
-    //   wall_proximity = true;
-    //   stop();
-    //   break;
-    // }
 
     if(sensor_in_range){
       if(fabs(getRightLR() - target_sensor_distance) < 2){
@@ -607,13 +583,7 @@ void strafe_thismuch_poc(int direction, float distance){
 
     us_read = getUSDistance();
 
-    // STOP CONDITION
-    // if (sr_left < 60 || sr_right < 60) {
-    //   wall_proximity = true;
-    //   stop();
-    //   delay(2000);
-    //   break;
-    // }
+
 
     // error calcs
     err_gyro = angle_diff(gyro_initial, gyro_read);
@@ -635,7 +605,7 @@ void strafe_thismuch_poc(int direction, float distance){
 
     // control effort calcs
     gyro_u = kp_gyro * err_gyro + ki_gyro * integral_sum_gyro + kd_gyro * d_err;
-    us_u = kp_us * err_us; // + ki_us * integral_sum_us;
+    us_u = kp_us * err_us + ki_us * integral_sum_us;
 
     // // clamping?? idk
     // gyro_u = constrain(gyro_u, -80, 80);
@@ -657,21 +627,18 @@ void strafe_thismuch_poc(int direction, float distance){
     }
 
 
-    // left_font_motor.writeMicroseconds(  1500 - gyro_u);
-    // left_rear_motor.writeMicroseconds(  1500 - gyro_u);
-    // right_font_motor.writeMicroseconds( 1500 - gyro_u);
-    // right_rear_motor.writeMicroseconds( 1500 - gyro_u);
 
     // DEBUGS 
-    // if (millis() - last_print > 100) {
-    //   // BluetoothSerial.print("err_gyro: ");
-    //   // BluetoothSerial.println(err_gyro, 4);
-    //   // BluetoothSerial.println();
-    //   BluetoothSerial.print("us_u: ");
-    //   BluetoothSerial.println(us_u, 2);
-    //   BluetoothSerial.println();
-    //   last_print = millis();
-    // }
+    if (millis() - last_print > 100) {
+      BluetoothSerial.print("target: ");
+      BluetoothSerial.println(target, 4);
+      BluetoothSerial.println();
+      // delay(10);
+      // BluetoothSerial.print("gyrou: ");
+      // BluetoothSerial.println(gyro_u, 2);
+      // BluetoothSerial.println();
+      last_print = millis();
+    }
 
 
     delay(10); // DELAY ///////////////
@@ -702,8 +669,9 @@ void turn_n_degrees(int deg)
   float prev_error = 0.0;
   unsigned long last_time = micros();
   unsigned long last_print = millis();
+  unsigned long fuck_off = millis();
 
-  while (true)
+  while (millis() - fuck_off < 3000)
   {
     unsigned long now = micros();
     float dt = (now - last_time) / 1000000.0;
@@ -774,33 +742,3 @@ void turn_n_degrees(int deg)
 
   stop();
 }
-
-// void quarter_turn(int cw_ccw_mode)
-// {
-//   unsigned long fuckthis = millis();
-//   unsigned long lastPrint = 0; // Timer for serial output
-//   float accumulated_angle;
-//   while (millis() - fuckthis < 5000)
-//   {
-//     GYRO_reading();
-//     accumulated_angle += rad;
-
-//     if (cw_ccw_mode == 1)
-//       cw();
-//     else
-//       ccw();
-
-//     // ONLY print every 100ms to avoid crashing the serial buffer
-//     if (millis() - lastPrint > 100)
-//     {
-//       BluetoothSerial.print("Heading: ");
-//       BluetoothSerial.println(accumulated_angle);
-//       lastPrint = millis();
-//     }
-//     if (abs(accumulated_angle) >= 1.57)
-//     {
-//       break;
-//     }
-//   }
-//   stop();
-// }

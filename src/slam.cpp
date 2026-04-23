@@ -1,12 +1,7 @@
 #include "slam.h"
 #include "helpers.h"
 #include "sensors.h"
-
-void init_slam()
-{
-    // No servo initialization needed anymore!
-}
-
+\
 // helper functions to set sensor limits
 float getValidSR(float raw) {
     return (raw >= 4.0 && raw <= 30.0) ? raw : -1.0;

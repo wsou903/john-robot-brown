@@ -100,11 +100,10 @@ STATE initialising()
     }
   }
 #endif
-  init_slam();
+
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
   // G28(); // homing to get to corner ////////////////////////////////// G28 :)
-  // farming_init();
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
 
@@ -122,21 +121,14 @@ STATE running()
   if (millis() - previous_millis > 500)
   { // Arduino style 500ms timed execution statement
     previous_millis = millis();
-    // float starting_dist = getUSDistance();
-    // drive_straight_poc();
-    // bool direction = 1; //true is strafing right, false is strafing left
-    // strafe_thismuch_poc(1, 20);
-    // G28();
-    // sweep();
+   
     // delay(30000);
     // budget_slam();
     // TestIRSensors();
+    strafe_thismuch_poc(1, 100); // Strafe right for 100mm
+    delay(30000);
 
-    // drive_straight_poc();
-    // strafe_straight_poc();
-    // function_complete = true;
-
-    farming();
+    // farming();
 
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
