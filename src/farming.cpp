@@ -6,6 +6,8 @@
 
 float inherited_angle = 0.0;
 
+int ir_drive_toggle = 0;
+
 void farming()
 {
     // BluetoothSerial.println("Starting farming trace...");

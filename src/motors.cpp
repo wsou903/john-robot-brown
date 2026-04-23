@@ -11,6 +11,8 @@ float integral_sum_ir;
 float integral_sum_gyro;
 float integral_sum_us;
 
+int ir_drive_toggle = 0;
+
 bool function_complete = false; // global flag for function completion (its like an fsm but shit)
 
 // global flags for completions (its like an fsm but shit)
@@ -162,7 +164,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
 
 void drive_straight_poc()
 {
-  int ir_enabled = 1;
+  int ir_enabled = 1*ir_drive_toggle;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3

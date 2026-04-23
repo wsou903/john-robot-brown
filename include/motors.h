@@ -7,6 +7,8 @@ extern bool function_complete;
 
 extern float inherited_angle;
 
+extern int ir_drive_toggle;
+
 
 // -- Code Prototypes --------------------------------------------------
 void speed_change_smooth();
