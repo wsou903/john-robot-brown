@@ -106,7 +106,102 @@ void budget_slam()
         }
         save_timer = now;
     }
+    // // 5. OUTPUT DATA
+    // static unsigned long print_timer = 0;
+    // if (now - print_timer > 100)
+    // {
+    //     BluetoothSerial.print("DATA,");
+    //     delay(10);
+    //     BluetoothSerial.print(robotX);
+    //     delay(10);
+    //     BluetoothSerial.print(",");
+    //     delay(10);
+    //     BluetoothSerial.print(robotY);
+    //     delay(10);
+    //     BluetoothSerial.print(",");
+    //     delay(10);
+    //     BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
+    //     print_timer = now;
+    // }
 }
+
+// void budget_slam()
+// {
+//     unsigned long now = millis();
+
+//     // get all sensors values
+//     int us_front = 1000 * getUSDistance();
+//     int lr_left = 1000 * getValidLR(getLeftLR());   // Assuming Left LR is on Left side
+//     int lr_right = 1000 * getValidLR(getRightLR()); // Assuming Right LR is on Right side
+//     float yaw = get_rotation_vector_yaw();
+
+//     bool sensor_in_range = (getLeftLR() > getRightLR());
+
+//     if (direction && sensor_in_range)
+//     {
+//         robotY = robotY + lr_right;
+//     }
+//     else if (direction && !sensor_in_range)
+//     {
+//         robotY = robotY + lr_left;
+//     }
+//     else if (!direction && sensor_in_range)
+//     {
+//         robotY = robotY + lr_right;
+//     }
+//     else
+//     {
+//         robotY = robotY + lr_left;
+//     }
+
+//     // int sum_y = 0;
+//     // int y_count = 0;
+
+//     // 3. Calculate Y from Left Sensor (if valid)
+//     // if (lr_left > 0)
+//     // {
+//     //     // We use cos(robot_heading) to correct for the robot being tilted
+//     //     int y_estimate_left = 1000 * (lr_left * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2);
+//     //     sum_y += y_estimate_left;
+//     //     y_count++;
+//     // }
+
+//     // // 4. Calculate Y from Right Sensor (if valid)
+//     // if (lr_right > 0)
+//     // {
+//     //     // Distance from right wall subtracted from total width
+//     //     float y_estimate_right = 1000 * (TABLE_WIDTH - ((lr_right * cos(yaw)) + (JOHN_ROBOT_WIDTH / 2)));
+//     //     sum_y += y_estimate_right;
+//     //     y_count++;
+//     // }
+
+//     // // 5. Average the Y results
+//     // if (y_count > 0)
+//     // {
+//     //     robotY = (sum_y / y_count) / 1000;
+//     // }
+
+//     robotX = us_front + 1000 * (JOHN_ROBOT_WIDTH / 2);
+
+//     robotX = robotX / 1000;
+//     robotY = robotY / 1000;
+//     static unsigned long print_timer = 0;
+//     if (now - print_timer > 200)
+//     {
+//         BluetoothSerial.print("DATA,");
+//         delay(10);
+//         BluetoothSerial.print(robotX);
+//         delay(10);
+//         BluetoothSerial.print(",");
+//         delay(10);
+//         BluetoothSerial.print(robotY);
+//         delay(10);
+//         BluetoothSerial.print(",");
+//         delay(10);
+//         BluetoothSerial.println(robot_heading * 180.0 / PI); // Deg for easier reading
+//         print_timer = now;
+//     }
+// }
 
 void dump_slam_data()
 {

@@ -164,7 +164,7 @@ void inverse_kinematics(float vel_x, float vel_y, float omega_z, float *ang_vel_
 
 void drive_straight_poc()
 {
-  int ir_enabled = 0*ir_drive_toggle;
+  int ir_enabled = 0 * ir_drive_toggle;
   int gyro_enabled = 1;
   int derivative_enabled = 1;
   // lk its fine without the D term with just PI 120/3
@@ -183,10 +183,10 @@ void drive_straight_poc()
   float kd_gyro = 5 * derivative_enabled;
 
   //   // PID VALUES // OLD BEAUTIFUL 150 SPEED_VAL SPEEDS :) SORT OF OK
-  float kp_ir = 10*ir_enabled;
+  float kp_ir = 10 * ir_enabled;
   // float kp_gyro = 120 * gyro_enabled;
 
-  float ki_ir = 0*0.001*ir_enabled;
+  float ki_ir = 0 * 0.001 * ir_enabled;
   // float ki_gyro = 3 * gyro_enabled;
 
   // float kd_gyro = 5 * derivative_enabled;
@@ -220,7 +220,6 @@ void drive_straight_poc()
   float gyro_initial = gyro_read;
 
   float speed_val_reborn = 150;
-
 
   // loop
   while (!wall_proximity)
@@ -281,7 +280,7 @@ void drive_straight_poc()
     integral_sum_gyro = constrain(integral_sum_gyro, -1000, 1000);
 
     // control effort calcs
-    ir_u = kp_ir *  err_ir + ki_ir * integral_sum_ir;
+    ir_u = kp_ir * err_ir + ki_ir * integral_sum_ir;
     gyro_u = kp_gyro * err_gyro + ki_gyro * integral_sum_gyro + kd_gyro * d_err;
 
     // clamping?? idk
@@ -563,9 +562,10 @@ void drive_tothis_poc(float distance)
   function_complete = true; // FLAG THE COMPLETION OF THIS FUNCTION (for the fake fsm)
 }
 
-void strafe_straight_poc(int direction)
+void strafe_straight_poc(int input)
 {
 
+  direction = input;
   int us_enabled = 1;
   int gyro_enabled = 1;
   int derivative_enabled = 0;

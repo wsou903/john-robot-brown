@@ -75,7 +75,7 @@ extern Servo turret_motor;
 const unsigned int MAX_DIST = 23200;
 extern unsigned long last_gyro_time;
 extern unsigned long lastTurretMove;
-extern int FRspeed_val, FLspeed_val, BRspeed_val, BLspeed_val, speed_change, currentLane, turretInterval, turretStep, pos, speed_val;
+extern int speed_change, currentLane, turretInterval, turretStep, pos, speed_val, direction; // 1 is right, 0 is left
 extern float robotX, robotY, rad, gyro_bias, robot_heading, lastRightSR, lastLeftSR, lastRightLR, lastLeftLR, lastUS;
 
 #endif
