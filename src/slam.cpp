@@ -1,6 +1,7 @@
 #include "slam.h"
 #include "helpers.h"
 #include "sensors.h"
+#include "farming.h"
 
 const int pos_readings = 200; // 500 points at 100ms = 50 seconds of recording
 int history_X[pos_readings];
@@ -155,7 +156,12 @@ void budget_slam()
     //     robotY = TABLE_WIDTH - (lr_right + (JOHN_ROBOT_WIDTH / 2.0));
     // }
 
-    robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
+    if (strafe_dir_global == 1){
+        robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
+    } else {
+        robotY = TABLE_WIDTH - (lr_right + (JOHN_ROBOT_WIDTH / 2.0));
+    }
+    // robotY = lr_left + (JOHN_ROBOT_WIDTH / 2.0);
 
     robotX = us_front + ((JOHN_ROBOT_WIDTH / 10) / 2);
 

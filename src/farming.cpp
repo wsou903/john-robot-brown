@@ -6,7 +6,7 @@
 
 float inherited_angle = 0.0;
 
-
+int strafe_dir_global = 1; // 1 is right, 0 is left
 
 void farming()
 {
@@ -18,9 +18,11 @@ void farming()
     // 1. Determine which direction the rest of the course is.
     // 1 = Right, 0 = Left (matching your strafe functions)
     int strafe_dir = 1;
+    strafe_dir_global = 1 ;
     if (getLeftLR() > getRightLR())
     {
         strafe_dir = 0; // Left side is open
+        strafe_dir_global = 0;
     }
     float align_calc_output[2] = {0}; // for angle align calc
 

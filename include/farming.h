@@ -3,6 +3,8 @@
 
 #include "config.h"
 
+extern int strafe_dir_global;
+
 
 // float Kp;
 // float Ki;

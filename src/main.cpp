@@ -104,7 +104,7 @@ STATE initialising()
 
   calibrateGyro(); // This is where the gyro calibration is done //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   delay(3000);
-  // G28(); // homing to get to corner ////////////////////////////////// G28 :)
+  G28(); // homing to get to corner ////////////////////////////////// G28 :)
   SerialCom->println("RUNNING STATE...");
   BluetoothSerial.println("RUNNING STATE...");
 
@@ -127,7 +127,7 @@ STATE running()
 
     // TestIRSensors();
     // dump_slam_data();
-    delay(30000);
+    delay(1000000);
 
 #ifndef NO_BATTERY_V_OK
     if (!is_battery_voltage_OK())
