@@ -42,7 +42,7 @@ void farming() {
 
     // 2. Define Thresholds
     const float LANE_WIDTH = 100.0;           // mm to strafe for each lane
-    const float REAR_WALL_TARGET = 150; //mm target for US sensor when driving backwards (course is 1991mm long)
+    const float REAR_WALL_TARGET = 155; //mm target for US sensor when driving backwards (course is 1991mm long)
     const float FWD_WALL_TARGET = 10;
     // const float STARTING_US_DIST = getUSDistance();
     // delay(100);
